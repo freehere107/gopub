@@ -2,11 +2,11 @@ package taskcontrollers
 
 import (
 	"encoding/json"
-	"github.com/astaxie/beego"
 	"github.com/linclin/gopub/src/controllers"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/library/components"
 	"github.com/linclin/gopub/src/models"
+	"github.com/astaxie/beego/logs"
 	"time"
 )
 
@@ -15,12 +15,12 @@ type SaveController struct {
 }
 
 func (c *SaveController) Post() {
-	//projectId,_:=c.GetInt("projectId",0)
+	// projectId,_:=c.GetInt("projectId",0)
 	if c.User == nil || c.User.Id == 0 {
 		c.SetJson(2, nil, "not login")
 		return
 	}
-	beego.Info(string(c.Ctx.Input.RequestBody))
+	logs.Info(string(c.Ctx.Input.RequestBody))
 	var task models.Task
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &task)
 	if err != nil {

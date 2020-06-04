@@ -1,12 +1,11 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-
 	"encoding/json"
 	"github.com/astaxie/beego/orm"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/models"
+	"github.com/astaxie/beego/logs"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -21,7 +20,7 @@ func (c *ChangePasswdController) Post() {
 		return
 	}
 
-	beego.Info(string(c.Ctx.Input.RequestBody))
+	logs.Info(string(c.Ctx.Input.RequestBody))
 
 	postData := map[string]string{"newpassword": "", "repeat_newpassword": ""}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &postData)
@@ -44,7 +43,7 @@ func (c *ChangePasswdController) Post() {
 	var user models.User
 	o := orm.NewOrm()
 	err = o.Raw("SELECT * FROM `user` WHERE id= ?", uid).QueryRow(&user)
-	beego.Info(err)
+	logs.Info(err)
 	//验证旧密码
 
 	if newPassword == repeatNewpassword {

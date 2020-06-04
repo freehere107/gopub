@@ -1,10 +1,10 @@
 package confcontrollers
 
 import (
-	"github.com/astaxie/beego"
 	"github.com/linclin/gopub/src/controllers"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/library/jumpserver"
+	"github.com/astaxie/beego/logs"
 	"strings"
 )
 
@@ -30,7 +30,7 @@ func (c *GroupInfoController) Get() {
 	var rsIps []string
 	for _, gid := range aGroupid {
 		aIp, _ := jumpserver.GetIpsByGroupid(string(gid))
-		beego.Info(aIp)
+		logs.Info(aIp)
 		mGroupid2true[string(gid)] = true
 		if len(aIp) > 0 {
 			for ip, _ := range aIp {

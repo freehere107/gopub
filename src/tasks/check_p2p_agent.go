@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"github.com/astaxie/beego/logs"
 	"github.com/linclin/gopub/src/library/components"
 	"github.com/linclin/gopub/src/library/p2p/init_sever"
 	"github.com/linclin/gopub/src/models"
@@ -22,7 +23,7 @@ func init() {
 
 }
 func Check_p2p_angent_status() error {
-	beego.Info("p2p agent自动任务开始" + time.Now().Format("2006-01-02 15:04:05"))
+	logs.Info("p2p agent自动任务开始" + time.Now().Format("2006-01-02 15:04:05"))
 	var projects []models.Project
 	o := orm.NewOrm()
 	num, err := o.Raw("SELECT * FROM `project` WHERE  p2p=1").QueryRows(&projects)
@@ -45,6 +46,6 @@ func Check_p2p_angent_status() error {
 			}
 		}
 	}
-	beego.Info("p2p agent自动任务结束" + time.Now().Format("2006-01-02 15:04:05"))
+	logs.Info("p2p agent自动任务结束" + time.Now().Format("2006-01-02 15:04:05"))
 	return nil
 }

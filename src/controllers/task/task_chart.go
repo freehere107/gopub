@@ -1,13 +1,13 @@
 package taskcontrollers
 
 import (
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
 	"github.com/astaxie/beego/orm"
 	"github.com/linclin/gopub/src/controllers"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/library/components"
 	"github.com/linclin/gopub/src/models"
+	"github.com/astaxie/beego/logs"
 	"time"
 )
 
@@ -42,7 +42,7 @@ func (c *TaskChartController) Get() {
 		for _, c := range count {
 			c["name"] = GetProjectLevel(common.GetInt(c["level"]))
 		}
-		beego.Info(count)
+		logs.Info(count)
 		c.SetJson(0, count, "")
 		return
 	} else if taskType == "dayBypro" {

@@ -2,9 +2,9 @@ package confcontrollers
 
 import (
 	"github.com/linclin/gopub/src/controllers"
+	"github.com/astaxie/beego/logs"
 
 	"encoding/json"
-	"github.com/astaxie/beego"
 	"github.com/linclin/gopub/src/models"
 )
 
@@ -20,10 +20,10 @@ func (c *ConfController) Get() {
 
 }
 func (c *ConfController) Post() {
-	//projectId,_:=c.GetInt("projectId",0)
+	// projectId,_:=c.GetInt("projectId",0)
 	var project models.Project
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &project)
 	err = models.UpdateProjectById(&project)
-	beego.Info(err)
+	logs.Info(err)
 	return
 }

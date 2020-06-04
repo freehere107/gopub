@@ -3,6 +3,7 @@ package p2p
 import (
 	"errors"
 	"fmt"
+	"github.com/astaxie/beego/logs"
 	"io"
 	"math/rand"
 	"net"
@@ -742,7 +743,7 @@ func (s *TaskSession) Init() {
 			if s.timeout() {
 				// Session超时没有启动，需要stop
 				s.stopSessChan <- s.taskID
-				log.Info("[", s.taskID, "] P2p session is timeout")
+				logs.Info("[", s.taskID, "] P2p session is timeout")
 			}
 			s.peersKeepAlive()
 		case <-tickChan:
@@ -755,7 +756,7 @@ func (s *TaskSession) Init() {
 		case <-s.retryConnTimeChan:
 			s.tryNewPeer()
 		case <-s.quitChan:
-			log.Info("[", s.taskID, "] Quit p2p session")
+			logs.Info("[", s.taskID, "] Quit p2p session")
 			s.shutdown()
 			return
 		}

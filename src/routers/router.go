@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func init() {
+func Run() {
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,

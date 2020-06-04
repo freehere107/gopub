@@ -1,6 +1,7 @@
 package p2p
 
 import (
+	"github.com/astaxie/beego/logs"
 	log "github.com/cihub/seelog"
 	"github.com/linclin/gopub/src/library/p2p/common"
 )
@@ -77,7 +78,7 @@ func (sm *TaskSessionMgnt) Start() error {
 			for _, ts := range sm.sessions {
 				go ts.Quit()
 			}
-			log.Info("Closed all sessions")
+			logs.Info("Closed all sessions")
 			return nil
 		case c := <-conChan:
 			log.Infof("[%s] New p2p connection, peer addr %s", c.taskID, c.remoteAddr.String())

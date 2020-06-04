@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/models"
+	"github.com/astaxie/beego/logs"
 	"golang.org/x/crypto/bcrypt"
 	"regexp"
 	"strings"
@@ -16,7 +16,7 @@ type RegisterController struct {
 	BaseController
 }
 
-//邮箱正则
+// 邮箱正则
 func IsEmail(str ...string) bool {
 	var b bool
 	for _, s := range str {
@@ -29,7 +29,7 @@ func IsEmail(str ...string) bool {
 }
 func (c *RegisterController) Post() {
 
-	beego.Info(string(c.Ctx.Input.RequestBody))
+	logs.Info(string(c.Ctx.Input.RequestBody))
 	registerData := map[string]interface{}{"user_password": "", "user_name": "", "Role": 1}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &registerData)
 	if err != nil {
@@ -50,9 +50,9 @@ func (c *RegisterController) Post() {
 
 	var user models.User
 	o := orm.NewOrm()
-	//先判断存在用户否
+	// 先判断存在用户否
 	err = o.Raw("SELECT * FROM `user` WHERE username= ?", registerUsername).QueryRow(&user)
-	beego.Info(user)
+	logs.Info(user)
 	if err == nil {
 		userId, _ := c.GetInt("id")
 		if userId == 0 {
@@ -89,7 +89,7 @@ func (c *RegisterController) Post() {
 
 		}
 
-	} else { //不存在，存库
+	} else { // 不存在，存库
 		var newuser models.User
 		userAuth := common.Md5String(registerUsername + common.GetString(time.Now().Unix()))
 		password := []byte("123456")

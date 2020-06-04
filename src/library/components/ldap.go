@@ -3,7 +3,8 @@ package components
 import (
 	"fmt"
 	"github.com/astaxie/beego"
-	ldap "gopkg.in/ldap.v3"
+	"github.com/go-ldap/ldap/v3"
+	"github.com/astaxie/beego/logs"
 )
 
 type Ldap struct {
@@ -21,13 +22,13 @@ func (l *Ldap) connect() (err bool) {
 	link, e := ldap.Dial("tcp", fmt.Sprintf("%s:%d", ldapHost, ldapPort))
 
 	if e != nil {
-		beego.Info("ldap connect error")
+		logs.Info("ldap connect error")
 		return false
 	}
 
 	e = link.Bind(beego.AppConfig.String("ldapManagerDn"), beego.AppConfig.String("ldapManagerPassword"))
 	if e != nil {
-		beego.Info("ldap login error")
+		logs.Info("ldap login error")
 		return false
 	}
 	l.link = link

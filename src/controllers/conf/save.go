@@ -2,9 +2,9 @@ package confcontrollers
 
 import (
 	"github.com/linclin/gopub/src/controllers"
+	"github.com/astaxie/beego/logs"
 
 	"encoding/json"
-	"github.com/astaxie/beego"
 	"github.com/linclin/gopub/src/models"
 )
 
@@ -13,8 +13,8 @@ type SaveController struct {
 }
 
 func (c *SaveController) Post() {
-	//projectId,_:=c.GetInt("projectId",0)
-	beego.Info(string(c.Ctx.Input.RequestBody))
+	// projectId,_:=c.GetInt("projectId",0)
+	logs.Info(string(c.Ctx.Input.RequestBody))
 	var project models.Project
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &project)
 	if err != nil {

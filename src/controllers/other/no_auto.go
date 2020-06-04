@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/linclin/gopub/src/controllers"
 	"github.com/linclin/gopub/src/library/common"
+	"github.com/astaxie/beego/logs"
 
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -13,10 +13,10 @@ type NoAutoController struct {
 	controllers.BaseController
 }
 
-//这里是查询每天 每周 每月 未进入预发布的项目
+// 这里是查询每天 每周 每月 未进入预发布的项目
 func (c *NoAutoController) Get() {
 	taskType := c.GetString("taskType")
-	beego.Info(taskType)
+	logs.Info(taskType)
 	o := orm.NewOrm()
 	sql := "SELECT project.id ,project.name  FROM `task` LEFT JOIN project ON task.project_id=project.id WHERE  project.level=2 %s group BY project.id"
 	var proIds []orm.Params

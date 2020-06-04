@@ -3,7 +3,8 @@ package ldap
 import (
 	"fmt"
 	"github.com/astaxie/beego"
-	ldap "gopkg.in/ldap.v3"
+	"github.com/astaxie/beego/logs"
+	"github.com/go-ldap/ldap/v3"
 	"strings"
 )
 
@@ -25,7 +26,7 @@ func (l *Ldap) Connect() (e error) {
 
 	link, e := ldap.Dial("tcp", fmt.Sprintf("%s:%d", ldapHost, ldapPort))
 	if e != nil {
-		beego.Info(e)
+		logs.Info(e)
 		return e
 	}
 
@@ -44,7 +45,7 @@ func (l *Ldap) Search(baseDn string, query string) (rs *ldap.SearchResult, e err
 	)
 	rs, e = l.link.Search(searchRequest)
 	if e != nil {
-		beego.Info(e)
+		logs.Info(e)
 	}
 	return rs, e
 }
@@ -100,7 +101,7 @@ func (l *Ldap) SearchGroupCn(query string) (cn string, e error) {
 		if len(rs.Entries) > 0 {
 			return rs.Entries[0].GetAttributeValue("cn"), nil
 		} else {
-			beego.Info("user is not in cronsun group " + query)
+			logs.Info("user is not in cronsun group " + query)
 			return "", fmt.Errorf("user is not in cronsun group")
 		}
 	} else {

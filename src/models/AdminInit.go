@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
 	"os"
 	"time"
 )
@@ -13,33 +15,24 @@ import (
 var o orm.Ormer
 
 func Syncdb() {
-	beego.Info("数据库初始化开始")
-	err := createdb()
-	if err != nil {
-		beego.Error("数据库创建错误:", err)
-		return
+	logs.Info("数据库初始化开始")
+	if err := createDB(); err != nil {
+		log.Fatalf("数据库创建错误:%v", err)
 	}
-
 	Connect()
 	o = orm.NewOrm()
 	// 数据库别名
 	name := "default"
-	// drop table 后再建表
-	force := false
-	// 打印执行过程
-	verbose := true
-	// 遇到错误立即返回
-	err = orm.RunSyncdb(name, force, verbose)
-	if err != nil {
-		beego.Error("数据表创建错误:", err)
+	if err := orm.RunSyncdb(name, false, true); err != nil {
+		log.Fatalf("数据表创建错误:%v", err)
 	}
-	beego.Info("数据表创建完成")
+	logs.Info("数据表创建完成")
 	insertUser()
-	beego.Info("数据添加完成")
+	logs.Info("数据添加完成")
 
 }
 
-//数据库连接
+// 数据库连接
 func Connect() {
 	dbUser := beego.AppConfig.String("mysqluser")
 	dbPass := beego.AppConfig.String("mysqlpass")
@@ -67,24 +60,24 @@ func Connect() {
 	maxIdleConn, _ := beego.AppConfig.Int("mysql_max_idle_conn")
 	maxOpenConn, _ := beego.AppConfig.Int("mysql_max_open_conn")
 	dbLink := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", dbUser, dbPass, dbHost, dbPort, dbName) + "&loc=Asia%2FShanghai"
-	//utils.Display("dbLink", dbLink)
+	// utils.Display("dbLink", dbLink)
 	err := orm.RegisterDriver("mysql", orm.DRMySQL)
 	if err != nil {
-		beego.Error("数据库连接错误:", err)
+		logs.Error("数据库连接错误:", err)
 		os.Exit(2)
 		return
 	}
 	err = orm.RegisterDataBase("default", "mysql", dbLink, maxIdleConn, maxOpenConn)
 	orm.Debug = true
 	if err != nil {
-		beego.Error("数据库连接错误:", err)
+		logs.Error("数据库连接错误:", err)
 		os.Exit(2)
 		return
 	}
 }
 
-//创建数据库
-func createdb() error {
+// 创建数据库
+func createDB() error {
 
 	dbUser := beego.AppConfig.String("mysqluser")
 	dbPass := beego.AppConfig.String("mysqlpass")
@@ -113,22 +106,23 @@ func createdb() error {
 
 	dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8", dbUser, dbPass, dbHost, dbPort)
 	db, err := sql.Open("mysql", dsn)
+	fmt.Println(dsn)
 	if err != nil {
-		beego.Error("数据库连接错误:", err)
+		logs.Error("数据库连接错误:", err)
 		os.Exit(2)
-		//panic(err.Error())
+		// panic(err.Error())
 		return err
 	}
 	sqlstring = fmt.Sprintf(" CREATE DATABASE if not exists `%s` CHARSET utf8 COLLATE utf8_general_ci", dbName)
 	r, err := db.Exec(sqlstring)
 	if err != nil {
-		beego.Info(err)
-		beego.Info(r)
-		db.Close()
+		logs.Info(err)
+		logs.Info(r)
+		_ = db.Close()
 		return err
 	} else {
-		db.Close()
-		beego.Info("数据库" + dbName + "创建成功")
+		_ = db.Close()
+		logs.Info("数据库" + dbName + "创建成功")
 		return nil
 	}
 
@@ -151,6 +145,6 @@ func insertUser() {
 	u.UpdatedAt = time.Now()
 	u.Realname = "管理员"
 	o = orm.NewOrm()
-	o.Insert(u)
+	_, _ = o.Insert(u)
 	fmt.Println("insert user end")
 }

@@ -2,6 +2,7 @@ package init_sever
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/linclin/gopub/src/library/p2p/common"
 	"github.com/linclin/gopub/src/library/p2p/server"
 	"os"
@@ -18,14 +19,14 @@ func Start() {
 	cfg.Server = true
 	P2pSvc, err = server.NewServer(&cfg)
 	if err != nil {
-		beego.Error("start server error, %s.\n", err.Error())
+		logs.Error("start server error, %s.\n", err.Error())
 		if beego.BConfig.RunMode != "docker" {
 			os.Exit(4)
 		}
 	}
-	beego.Info("服务端p2p配置检测成功")
+	logs.Info("服务端p2p配置检测成功")
 	if err := P2pSvc.Start(); err != nil {
-		beego.Error("Start service failed, %s.\n", err.Error())
+		logs.Error("Start service failed, %s.\n", err.Error())
 		if beego.BConfig.RunMode != "docker" {
 			os.Exit(4)
 		}

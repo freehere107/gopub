@@ -1,12 +1,12 @@
 package components
 
-import ()
 import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/library/p2p/init_sever"
 	"github.com/linclin/gopub/src/models"
+	"github.com/astaxie/beego/logs"
 	"strings"
 	"time"
 )
@@ -54,7 +54,7 @@ func (c *BaseComponents) CopyFiles() error {
 	} else {
 		_, err := c.copyFilesBySftp(src, dest, []string{})
 		if err != nil {
-			beego.Info(err)
+			logs.Info(err)
 			return err
 		}
 	}
@@ -105,7 +105,7 @@ func (c *BaseComponents) unpackageFiles() error {
 	}
 	cmds := []string{}
 	cmds = append(cmds, fmt.Sprintf("cd %s ", releasePath))
-	//兼容docker
+	// 兼容docker
 	if beego.BConfig.RunMode == "docker" {
 		cmds = append(cmds, fmt.Sprintf("tar %s %s -C %s", unTarparameter, releasePackage, releasePath))
 	} else {
@@ -127,7 +127,7 @@ func (c *BaseComponents) packageFiles() error {
 		tarparameter = "-cf"
 	}
 	cmds := []string{}
-	beego.Info(strings.TrimRight(c.getDeployWorkspace(version), "/"))
+	logs.Info(strings.TrimRight(c.getDeployWorkspace(version), "/"))
 	cmds = append(cmds, fmt.Sprintf("cd %s", strings.TrimRight(c.getDeployWorkspace(version), "/")))
 	commandFiles := "."
 	if beego.BConfig.RunMode == "docker" {

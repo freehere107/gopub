@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 
 	"encoding/json"
 	"github.com/astaxie/beego/orm"
@@ -19,8 +20,8 @@ type LoginController struct {
 }
 
 func (c *LoginController) Post() {
-	//哈希校验成功后 更新 auth_key
-	beego.Info(string(c.Ctx.Input.RequestBody))
+	// 哈希校验成功后 更新 auth_key
+	logs.Info(string(c.Ctx.Input.RequestBody))
 	postData := map[string]string{"user_password": "", "user_name": ""}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &postData)
 	if err != nil {
@@ -36,7 +37,7 @@ func (c *LoginController) Post() {
 	var user models.User
 	o := orm.NewOrm()
 	err = o.Raw("SELECT * FROM `user` WHERE username= ?", userName).QueryRow(&user)
-	beego.Info(user)
+	logs.Info(user)
 
 	enableLdap, _ := beego.AppConfig.Bool("enableLdap")
 	if enableLdap == true {
@@ -76,12 +77,12 @@ func (c *LoginController) ldapLogin(userName string, password string, gopub_user
 	if e != nil {
 		return "ldap连接失败", gopub_user, false
 	}
-	//验证用户身份
+	// 验证用户身份
 	ldap_user, e := ldap.AuthByUidAndPassword(userName, password)
 	if e != nil {
 		return "ldap身份认证失败", gopub_user, false
 	}
-	//验证是否在gopub用户组
+	// 验证是否在gopub用户组
 	ldapGroupFilter := beego.AppConfig.String("ldapGroupFilter")
 	ldapGroupFilter = strings.Replace(ldapGroupFilter, "{UidNumber}", ldap_user.UidNumber, -1)
 	ldapGroupFilter = strings.Replace(ldapGroupFilter, "{uid}", ldap_user.Uid, -1)
@@ -90,7 +91,7 @@ func (c *LoginController) ldapLogin(userName string, password string, gopub_user
 
 	groupCn, e := ldap.SearchGroupCn(ldapGroupFilter)
 	if e != nil {
-		beego.Info("ldap组身份验证失败")
+		logs.Info("ldap组身份验证失败")
 		return "ldap组身份验证失败", gopub_user, false
 	} else {
 		o := orm.NewOrm()
@@ -101,9 +102,9 @@ func (c *LoginController) ldapLogin(userName string, password string, gopub_user
 		if gopub_user.Username == "" {
 			c.AddUserFromLdap2Gopub(ldap_user, role_id)
 			_ = o.Raw("SELECT * FROM `user` WHERE username= ?", userName).QueryRow(&gopub_user)
-			beego.Info(gopub_user)
+			logs.Info(gopub_user)
 		} else {
-			//role变更
+			// role变更
 			if role_id != gopub_user.Role {
 				gopub_user.Role = role_id
 				models.UpdateUserById(&gopub_user)
@@ -129,5 +130,5 @@ func (c *LoginController) AddUserFromLdap2Gopub(user ldap.Ldap_user, role_id int
 	userModel.Role = role_id
 	userModel.FromLdap = 1
 	uid, _ := models.AddUser(&userModel)
-	beego.Info(uid)
+	logs.Info(uid)
 }

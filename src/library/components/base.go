@@ -9,6 +9,7 @@ import (
 	"github.com/linclin/gopub/src/library/jumpserver"
 	"github.com/linclin/gopub/src/library/ssh"
 	"github.com/linclin/gopub/src/models"
+	"github.com/astaxie/beego/logs"
 	"regexp"
 	"strings"
 	"time"
@@ -41,7 +42,7 @@ func (c *BaseComponents) runLocalCommand(command string) (sshexec.ExecResult, er
 	s, err := gopubssh.CommandLocal(command, SSHTIMEOUT)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
-	//获取执行时间
+	// 获取执行时间
 	duration := common.GetInt(s.EndTime.Sub(s.StartTime).Seconds())
 	createdAt := int(s.StartTime.Unix())
 	status := 1
@@ -70,13 +71,13 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 	sshExecAgent.Worker = SSHWorker
 	sshExecAgent.TimeOut = time.Duration(SSHREMOTETIMEOUT) * time.Second
 	port, _ := beego.AppConfig.Int("SshPort")
-	beego.Info(hosts)
-	beego.Info(port)
+	logs.Info(hosts)
+	logs.Info(port)
 	s, err := sshExecAgent.SshHostByKey(hosts, port, c.project.ReleaseUser, command)
-	beego.Info(err)
+	logs.Info(err)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
-	//获取执行时间
+	// 获取执行时间
 	duration := common.GetInt(time.Now().Sub(start).Seconds())
 
 	status := 1
@@ -108,7 +109,7 @@ func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts []string
 	s, err := sshExecAgent.SftpHostByKey(hosts, port, c.project.ReleaseUser, src, dest)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
-	//获取执行时间
+	// 获取执行时间
 	duration := common.GetInt(time.Now().Sub(start).Seconds())
 	status := 1
 	if err != nil {
@@ -135,7 +136,7 @@ func (c *BaseComponents) copyFilesByP2p(id string, src string, dest string, host
 	s, err := gopubssh.TransferByP2p(id, hosts, c.project.ReleaseUser, src, dest, SSHREMOTETIMEOUT)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
-	//获取执行时间
+	// 获取执行时间
 	duration := common.GetInt(time.Now().Sub(start).Seconds())
 
 	status := 1
@@ -195,7 +196,7 @@ func (c *BaseComponents) GetHosts_database() []HostInfo {
 	if c.task != nil && c.task.Hosts != "" {
 		hostsStr = c.task.Hosts
 	}
-	//获取ip
+	// 获取ip
 	reg := regexp.MustCompile(`(\d+)\.(\d+)\.(\d+)\.(\d+)`)
 	hosts := reg.FindAll([]byte(hostsStr), -1)
 	res := []HostInfo{}
@@ -210,7 +211,7 @@ func (c *BaseComponents) GetHosts_database() []HostInfo {
 			res = append(res, HostInfo{Ip: string(host), Port: 22})
 		}
 	}
-	//格式化端口号
+	// 格式化端口号
 	reg1 := regexp.MustCompile(`(\d+)\.(\d+)\.(\d+)\.(\d+)\:(\d+)`)
 	hosts1 := reg1.FindAll([]byte(hostsStr), -1)
 	for _, host := range hosts1 {
@@ -222,7 +223,7 @@ func (c *BaseComponents) GetHosts_database() []HostInfo {
 			}
 		}
 	}
-	//格式化端口号
+	// 格式化端口号
 	reg2 := regexp.MustCompile(`(\d+)\#(\d+)\.(\d+)\.(\d+)\.(\d+)`)
 	hosts2 := reg2.FindAll([]byte(hostsStr), -1)
 	for _, host := range hosts2 {
@@ -266,7 +267,7 @@ func (c *BaseComponents) GetAllHost() []string {
 func (c *BaseComponents) GetGroupHost() map[int]string {
 	hosts := map[int]string{}
 	hostsInfo := c.GetHosts()
-	beego.Info(hostsInfo)
+	logs.Info(hostsInfo)
 	for _, info := range hostsInfo {
 		hosts[info.Group] = info.Ip + ":" + common.GetString(info.Port) + "\r\n"
 	}
@@ -345,7 +346,7 @@ func (c *BaseComponents) getReleaseVersionPackage(version string) string {
 	return fmt.Sprintf("%s.tar.gz", c.getReleaseVersionDir(version))
 }
 
-//根据git地址获取项目名字
+// 根据git地址获取项目名字
 func (c *BaseComponents) GetGitProjectName(gitUrl string) string {
 	s := strings.Split(gitUrl, "/")
 	sname := s[len(s)-1]
@@ -358,18 +359,18 @@ func (c *BaseComponents) GetGitProjectName(gitUrl string) string {
 
 func (c *BaseComponents) LogTaskCommond(value interface{}) {
 
-	////设置日志
-	//fn := "logs/task_log/task-" + time.Now().Format("20060102") + ".log"
-	//if _, err := os.Stat(fn); err != nil {
-	//	if os.IsNotExist(err) {
-	//		os.Create(fn)
-	//	}
-	//}
-	//log := logs.NewLogger(1)
-	//log.SetLogger("file", `{"filename":"` + fn + `"}`)
-	//log.Info("---------------------------------")
-	//log.Info("id:%d > %s\n", c.task.Id, value)
-	//log.Info("---------------------------------")
+	// //设置日志
+	// fn := "logs/task_log/task-" + time.Now().Format("20060102") + ".log"
+	// if _, err := os.Stat(fn); err != nil {
+	// 	if os.IsNotExist(err) {
+	// 		os.Create(fn)
+	// 	}
+	// }
+	// log := logs.NewLogger(1)
+	// log.SetLogger("file", `{"filename":"` + fn + `"}`)
+	// logs.Info("---------------------------------")
+	// logs.Info("id:%d > %s\n", c.task.Id, value)
+	// logs.Info("---------------------------------")
 }
 func (c *BaseComponents) SaveRecord(command string) int {
 	re := models.Record{}
@@ -389,7 +390,7 @@ func (c *BaseComponents) SaveRecord(command string) int {
 	return int(id)
 }
 func (c *BaseComponents) SaveRecordRes(id int, duration int, createdAt int, status int, value interface{}) {
-	beego.Info(value)
+	logs.Info(value)
 	if duration < 0 {
 		duration = 0
 	}
