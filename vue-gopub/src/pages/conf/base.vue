@@ -273,12 +273,10 @@
             //获取数据
             get_table_data(){
                 this.load_data = true
-                this.$http.get(port_conf.list, {
-                            params: {
+                this.$http.post(port_conf.list, {
                                 page: this.currentPage,
                                 length: this.length,
                                 select_info: this.select_info
-                            }
                         })
                         .then(({data: {data}}) => {
                 this.table_data = data.table_data
@@ -286,11 +284,9 @@
                 this.total = data.total
                 this.load_data = false
             })
-            .
-                catch(() => {
+            .catch(() => {
                     this.load_data = false
-            })
-            },
+            })},
             //根据id删除数据
             delete_data(id){
                 this.$confirm('此操作将删除该数据, 是否继续?', '提示', {

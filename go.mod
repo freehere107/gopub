@@ -9,6 +9,7 @@ require (
 	github.com/cucued/sshexec v0.0.0-20200228123807-89cda2655e44
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-ldap/ldap/v3 v3.1.10
+	github.com/go-playground/validator/v10 v10.3.0
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/linclin/grpool v0.0.0-20170608104027-1e728f61a9da // indirect

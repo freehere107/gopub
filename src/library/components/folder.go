@@ -3,10 +3,10 @@ package components
 import (
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/library/p2p/init_sever"
 	"github.com/linclin/gopub/src/models"
-	"github.com/astaxie/beego/logs"
 	"strings"
 	"time"
 )
@@ -211,7 +211,7 @@ func (c *BaseComponents) TestSsh() error {
  */
 func (c *BaseComponents) TestReleaseDir() error {
 	temDir := "detection" + time.Now().Format("2006-01-02 15:04:05")
-	cmds := []string{}
+	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("mkdir -p %s", c.getReleaseVersionDir(temDir)))
 	cmds = append(cmds, fmt.Sprintf("rm -rf  %s", c.getReleaseVersionDir(temDir)))
 	cmd := strings.Join(cmds, "&&")
@@ -225,12 +225,12 @@ func (c *BaseComponents) TestReleaseDir() error {
  */
 func (c *BaseComponents) SendP2pAgent(dirAgentPath string, destPath string) error {
 	agentFile := "agent_main"
-	cmds2 := []string{}
+	var cmds2 []string
 	cmds2 = append(cmds2, fmt.Sprintf("ps -ef |grep %s| grep -v grep  |awk '{print $2}' |xargs kill -9", agentFile))
 	cmd2 := strings.Join(cmds2, " && ")
-	c.runRemoteCommand(cmd2, []string{})
+	_, _ = c.runRemoteCommand(cmd2, []string{})
 
-	cmds1 := []string{}
+	var cmds1 []string
 	cmds1 = append(cmds1, fmt.Sprintf("mkdir -p  %s", strings.TrimRight(destPath, "/")+"/src"))
 	cmds1 = append(cmds1, fmt.Sprintf("rm -rf   %s/src/%s", strings.TrimRight(destPath, "/"), agentFile))
 	cmd1 := strings.Join(cmds1, "&&")
@@ -252,7 +252,7 @@ func (c *BaseComponents) SendP2pAgent(dirAgentPath string, destPath string) erro
 	if err != nil {
 		return err
 	}
-	cmds := []string{}
+	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("chmod 777 -R %s/* ", strings.TrimRight(destPath, "/")))
 	cmds = append(cmds, fmt.Sprintf("cd %s/", strings.TrimRight(destPath, "/")))
 	cmds = append(cmds, "./control start")

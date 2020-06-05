@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/astaxie/beego/logs"
 	"github.com/linclin/gopub/src/library/common"
 	"runtime"
 
@@ -10,7 +11,7 @@ import (
 	"strings"
 )
 
-//基类
+// 基类
 type BaseController struct {
 	beego.Controller
 	Project *models.Project
@@ -21,14 +22,15 @@ type BaseController struct {
 // Prepare implemented Prepare method for baseRouter.
 func (c *BaseController) Prepare() {
 
-	//获取panic
+	// 获取panic
 	defer func() {
-		if panic_err := recover(); panic_err != nil {
-			var buf []byte = make([]byte, 1024)
-			runtimec := runtime.Stack(buf, false)
-			beego.Error("控制器错误:", panic_err, string(buf[0:runtimec]))
+		if err := recover(); err != nil {
+			var buf = make([]byte, 1024)
+			trace := runtime.Stack(buf, false)
+			logs.Error("控制器错误:", err, string(buf[0:trace]))
 		}
 	}()
+
 	taskId := ""
 	if c.Ctx.Input.Param(":taskId") != "" {
 		taskId = c.Ctx.Input.Param(":taskId")
@@ -38,6 +40,7 @@ func (c *BaseController) Prepare() {
 	if taskId != "" {
 		c.Task, _ = models.GetTaskById(common.GetInt(taskId))
 	}
+
 	projectId := ""
 	if c.Ctx.Input.Param(":projectId") != "" {
 		projectId = c.Ctx.Input.Param(":projectId")
@@ -47,6 +50,7 @@ func (c *BaseController) Prepare() {
 	if projectId != "" {
 		c.Project, _ = models.GetProjectById(common.GetInt(projectId))
 	}
+
 	token := ""
 	if ah := c.Ctx.Input.Header("Authorization"); ah != "" {
 		if len(ah) > 5 && strings.ToUpper(ah[0:5]) == "TOKEN" {
@@ -62,16 +66,16 @@ func (c *BaseController) Prepare() {
 		}
 	}
 }
-func (this *BaseController) SetJson(code int, data interface{}, Msg string) {
+func (c *BaseController) SetJson(code int, data interface{}, Msg string) {
 	if code == 0 {
 		if Msg == "" {
-			Msg = "sucess"
+			Msg = "success"
 		}
-		this.Data["json"] = map[string]interface{}{"code": code, "msg": Msg, "data": data}
-		this.ServeJSON()
-	} else {
-		this.Data["json"] = map[string]interface{}{"code": code, "msg": Msg, "data": data}
-		this.ServeJSON()
+		c.Data["json"] = map[string]interface{}{"code": code, "msg": Msg, "data": data}
+		c.ServeJSON()
+		return
 	}
+	c.Data["json"] = map[string]interface{}{"code": code, "msg": Msg, "data": data}
+	c.ServeJSON()
 
 }
