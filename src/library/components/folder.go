@@ -30,7 +30,7 @@ func (c *BaseComponents) InitRemoteVersion(version string) error {
 	cmds := []string{}
 	cmds = append(cmds, fmt.Sprintf("mkdir -p %s ", c.getReleaseVersionDir(version)))
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runRemoteCommand(cmd, []string{})
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -112,7 +112,7 @@ func (c *BaseComponents) unpackageFiles() error {
 		cmds = append(cmds, fmt.Sprintf("tar --preserve-permissions --touch --no-same-owner %s %s -C %s", unTarparameter, releasePackage, releasePath))
 	}
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runRemoteCommand(cmd, []string{})
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -191,7 +191,7 @@ func (c *BaseComponents) CleanUpReleasesVersion(versions []string) error {
 		}
 	}
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runRemoteCommand(cmd, []string{})
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -201,7 +201,7 @@ func (c *BaseComponents) CleanUpReleasesVersion(versions []string) error {
  */
 func (c *BaseComponents) TestSsh() error {
 	cmd := "id"
-	_, err := c.runRemoteCommand(cmd, []string{})
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -215,7 +215,7 @@ func (c *BaseComponents) TestReleaseDir() error {
 	cmds = append(cmds, fmt.Sprintf("mkdir -p %s", c.getReleaseVersionDir(temDir)))
 	cmds = append(cmds, fmt.Sprintf("rm -rf  %s", c.getReleaseVersionDir(temDir)))
 	cmd := strings.Join(cmds, "&&")
-	_, err := c.runRemoteCommand(cmd, []string{})
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -228,13 +228,13 @@ func (c *BaseComponents) SendP2pAgent(dirAgentPath string, destPath string) erro
 	var cmds2 []string
 	cmds2 = append(cmds2, fmt.Sprintf("ps -ef |grep %s| grep -v grep  |awk '{print $2}' |xargs kill -9", agentFile))
 	cmd2 := strings.Join(cmds2, " && ")
-	_, _ = c.runRemoteCommand(cmd2, []string{})
+	_, _ = c.runRemoteCommand(cmd2)
 
 	var cmds1 []string
 	cmds1 = append(cmds1, fmt.Sprintf("mkdir -p  %s", strings.TrimRight(destPath, "/")+"/src"))
 	cmds1 = append(cmds1, fmt.Sprintf("rm -rf   %s/src/%s", strings.TrimRight(destPath, "/"), agentFile))
 	cmd1 := strings.Join(cmds1, "&&")
-	_, err := c.runRemoteCommand(cmd1, []string{})
+	_, err := c.runRemoteCommand(cmd1)
 	if err != nil {
 		return err
 	}
@@ -257,7 +257,7 @@ func (c *BaseComponents) SendP2pAgent(dirAgentPath string, destPath string) erro
 	cmds = append(cmds, fmt.Sprintf("cd %s/", strings.TrimRight(destPath, "/")))
 	cmds = append(cmds, "./control start")
 	cmd := strings.Join(cmds, "&&")
-	_, err = c.runRemoteCommand(cmd, []string{})
+	_, err = c.runRemoteCommand(cmd)
 	if err != nil {
 		return err
 	}
@@ -279,21 +279,21 @@ func (c *BaseComponents) GetExecFlush() error {
 	cmds1 := []string{}
 	cmds1 = append(cmds1, fmt.Sprintf("sed -i -r 's/ts=[0-9a-f_]*/ts=%s/g' %s", sha, projectFile))
 	cmd1 := strings.Join(cmds1, "&&")
-	_, err = c.runRemoteCommand(cmd1, []string{})
+	_, err = c.runRemoteCommand(cmd1)
 	return err
 }
 func (c *BaseComponents) GetGitLog() error {
 	cmds1 := []string{}
 	cmds1 = append(cmds1, fmt.Sprintf("cd %s && git branch  | grep  \"*\" && git log -1", c.project.ReleaseTo))
 	cmd1 := strings.Join(cmds1, "&&")
-	_, err := c.runRemoteCommand(cmd1, []string{})
+	_, err := c.runRemoteCommand(cmd1)
 	return err
 }
 func (c *BaseComponents) GetGitPull() error {
 	cmds1 := []string{}
 	cmds1 = append(cmds1, fmt.Sprintf("cd %s && git pull && rm Runtime/* -rf", c.project.ReleaseTo))
 	cmd1 := strings.Join(cmds1, "&&")
-	_, err := c.runRemoteCommand(cmd1, []string{})
+	_, err := c.runRemoteCommand(cmd1)
 	return err
 }
 func (c *BaseComponents) StartP2pAgent(ips []string, destPath string) error {
@@ -301,6 +301,6 @@ func (c *BaseComponents) StartP2pAgent(ips []string, destPath string) error {
 	cmds = append(cmds, fmt.Sprintf("cd %s/", strings.TrimRight(destPath, "/")))
 	cmds = append(cmds, "./control start")
 	cmd := strings.Join(cmds, "&&")
-	_, err := c.runRemoteCommand(cmd, ips)
+	_, err := c.runRemoteCommand(cmd, ips...)
 	return err
 }

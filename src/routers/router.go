@@ -34,13 +34,13 @@ func Run() {
 	// conf 项目配置
 	beego.Router("/api/get/conf/list", &confcontrollers.ListController{})
 	beego.Router("/api/get/conf/get", &confcontrollers.ConfController{})
-
 	beego.Router("/api/get/conf/mylist", &confcontrollers.MyListController{})
+	beego.Router("/api/get/conf/lock", &confcontrollers.LockController{})
+	beego.Router("/api/get/conf/tags", &confcontrollers.TagsController{})
+
 	beego.Router("/api/post/conf/save", &confcontrollers.SaveController{})
 	beego.Router("/api/get/conf/del", &confcontrollers.DelController{})
 	beego.Router("/api/get/conf/copy", &confcontrollers.CopyController{})
-	beego.Router("/api/get/conf/tags", &confcontrollers.TagsController{})
-	beego.Router("/api/get/conf/lock", &confcontrollers.LockController{})
 	beego.Router("/api/get/conf/server_groups", &confcontrollers.ServerGroupsController{})
 	beego.Router("/api/get/conf/groupinfo", &confcontrollers.GroupInfoController{})
 
@@ -53,12 +53,11 @@ func Run() {
 	beego.Router("/api/get/walle/flush", &wallecontrollers.FlushController{})
 
 	beego.Router("/api/get/git/branch", &wallecontrollers.BranchController{})
+	beego.Router("/api/get/git/tag", &wallecontrollers.TagController{})
 	beego.Router("/api/get/git/commit", &wallecontrollers.CommitController{})
+
 	beego.Router("/api/get/git/gitpull", &wallecontrollers.GitpullController{})
 	beego.Router("/api/get/git/gitlog", &wallecontrollers.GitlogController{})
-	beego.Router("/api/get/git/tag", &wallecontrollers.TagController{})
-
-	beego.Router("/api/get/jenkins/commit", &wallecontrollers.JenkinsController{})
 
 	beego.Router("/api/get/task/list", &taskcontrollers.ListController{})
 	beego.Router("/api/get/task/chart", &taskcontrollers.TaskChartController{})

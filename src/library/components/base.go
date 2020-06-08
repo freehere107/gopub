@@ -57,7 +57,7 @@ func (c *BaseComponents) runLocalCommand(command string) (sshexec.ExecResult, er
 /**
 * 执行远端目标机命令
  */
-func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]sshexec.ExecResult, error) {
+func (c *BaseComponents) runRemoteCommand(command string, hosts ...string) ([]sshexec.ExecResult, error) {
 	if len(hosts) == 0 {
 		hostsInfo := c.GetHosts()
 		for _, info := range hostsInfo {

@@ -17,20 +17,20 @@ func (c *TagsController) Get() {
 		return
 	}
 
-	var rows []orm.Params
-	o := orm.NewOrm()
-	o.Raw("SELECT tag FROM `project`").Values(&rows)
+	var (
+		rows []orm.Params
+		a    []string
+	)
 
-	var a []string
-	if len(rows) > 0 {
-		for _, row := range rows {
-			tmp := strings.Split(common.GetString(row["tag"]), " ")
-			if len(tmp) > 0 {
-				for _, tag := range tmp {
-					if tag != "" {
-						a = append(a, tag)
-					}
-				}
+	o := orm.NewOrm()
+	_, _ = o.Raw("SELECT tag FROM `project`").Values(&rows)
+
+	for _, row := range rows {
+
+		tmp := strings.Split(common.GetString(row["tag"]), " ")
+		for _, tag := range tmp {
+			if tag != "" {
+				a = append(a, tag)
 			}
 		}
 	}

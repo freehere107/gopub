@@ -23,12 +23,12 @@ func (c *BaseGit) UpdateRepo(branch string, gitDir string) error {
 	}
 
 	dotGit := strings.TrimRight(gitDir, "/") + "/.git"
-	if _, err := c.baseComponents.runRemoteCommand(fmt.Sprintf("dir %s", dotGit), nil); err != nil {
+	if _, err := c.baseComponents.runRemoteCommand(fmt.Sprintf("dir %s", dotGit)); err != nil {
 		cmds = append(cmds, fmt.Sprintf("mkdir -p %s ", gitDir))
 		cmds = append(cmds, fmt.Sprintf("cd %s ", gitDir))
 		cmds = append(cmds, fmt.Sprintf("/usr/bin/env git clone -q %s .", c.baseComponents.project.RepoUrl))
 		cmds = append(cmds, fmt.Sprintf("/usr/bin/env git checkout -q %s", branch))
-		_, err = c.baseComponents.runRemoteCommand(strings.Join(cmds, " && "), nil)
+		_, err = c.baseComponents.runRemoteCommand(strings.Join(cmds, " && "))
 		return err
 	}
 
@@ -38,7 +38,7 @@ func (c *BaseGit) UpdateRepo(branch string, gitDir string) error {
 	cmds = append(cmds, fmt.Sprintf("/usr/bin/env git checkout -q %s ", branch))
 	cmds = append(cmds, fmt.Sprintf("/usr/bin/env git fetch -q --all"))
 	cmds = append(cmds, fmt.Sprintf("/usr/bin/env git reset -q --hard origin/%s ", branch))
-	_, err := c.baseComponents.runRemoteCommand(strings.Join(cmds, " && "), nil)
+	_, err := c.baseComponents.runRemoteCommand(strings.Join(cmds, " && "))
 	return err
 
 }
@@ -69,11 +69,11 @@ func (c *BaseGit) GetBranchList() ([]map[string]string, error) {
 	cmds = append(cmds, "/usr/bin/env git pull -a ")
 	cmds = append(cmds, "/usr/bin/env git branch -a ")
 	cmd := strings.Join(cmds, " && ")
-	s, err := c.baseComponents.runLocalCommand(cmd)
+	s, err := c.baseComponents.runRemoteCommand(cmd)
 	if err != nil {
 		return history, err
 	}
-	items := strings.Split(s.Result, "\n")
+	items := strings.Split(s[0].Result, "\n")
 	for _, item := range items {
 		item = strings.Trim(item, " ")
 		remotePrefix := "remotes/origin/"
@@ -90,26 +90,25 @@ func (c *BaseGit) GetBranchList() ([]map[string]string, error) {
  * 获取提交历史
  *
  */
-func (c *BaseGit) GetCommitList(branch string, count int) ([]map[string]string, error) {
-	if count == 0 {
-		count = 20
+func (c *BaseGit) GetCommitList(branch string) ([]map[string]string, error) {
 
-	}
 	if branch == "" {
 		branch = "master"
 	}
 	var history []map[string]string
 	destination := c.baseComponents.GetDeployFromDir()
-	c.UpdateRepo(branch, destination)
+	_ = c.UpdateRepo(branch, destination)
 	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("cd %s ", destination))
-	cmds = append(cmds, `/usr/bin/env git log -`+common.GetString(count)+` --pretty="%h - %an %s" `)
+	cmds = append(cmds, `/usr/bin/env git log -`+common.GetString(20)+` --pretty="%h - %an %s" `)
 	cmd := strings.Join(cmds, " && ")
-	s, err := c.baseComponents.runLocalCommand(cmd)
+	s, err := c.baseComponents.runRemoteCommand(cmd)
+
 	if err != nil {
 		return history, err
 	}
-	items := strings.Split(s.Result, "\n")
+
+	items := strings.Split(s[0].Result, "\n")
 	for _, item := range items {
 		if strings.Index(item, "-") > -1 {
 			commitId := common.SubString(item, 0, strings.Index(item, "-")-1)
@@ -123,30 +122,32 @@ func (c *BaseGit) GetCommitList(branch string, count int) ([]map[string]string, 
  * 获取tag记录
  *
  */
-func (c *BaseGit) GetTagList(count int) ([]map[string]string, error) {
-	if count == 0 {
-		count = 20
-	}
+func (c *BaseGit) GetTagList() ([]map[string]string, error) {
 	_ = c.UpdateRepo("", "")
 	var history []map[string]string
 	destination := c.baseComponents.GetDeployFromDir()
-	cmds := []string{}
+
+	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("cd %s ", destination))
 	cmds = append(cmds, `/usr/bin/env git tag -l `)
 	cmd := strings.Join(cmds, " && ")
-	s, err := c.baseComponents.runLocalCommand(cmd)
+	s, err := c.baseComponents.runRemoteCommand(cmd)
 	if err != nil {
 		return history, err
 	}
-	items := strings.Split(s.Result, "\n")
+
+	items := strings.Split(s[0].Result, "\n")
+
 	for _, item := range items {
-		history = append(history, map[string]string{"id": item, "message": item})
+		if strings.TrimSpace(item) != "" {
+			history = append(history, map[string]string{"id": item, "message": item})
+		}
 	}
 	return history, nil
 }
 
 func (c *BaseGit) DiffBetweenCommits(branch string, commitIdNew string, commitIdOld string) ([]string, error) {
-	c.UpdateRepo(branch, "")
+	_ = c.UpdateRepo(branch, "")
 	destination := c.baseComponents.GetDeployFromDir()
 	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("cd %s ", destination))

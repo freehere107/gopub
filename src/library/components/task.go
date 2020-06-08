@@ -160,7 +160,7 @@ func (c *BaseComponents) UpdateRemoteServers(version string) error {
 		cmds = append(cmds, c.getRemotePostReleaseCommand(version))
 	}
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runRemoteCommand(cmd, []string{})
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 

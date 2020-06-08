@@ -3,7 +3,6 @@ package taskcontrollers
 import (
 	"github.com/linclin/gopub/src/controllers"
 	"github.com/linclin/gopub/src/models"
-	"time"
 )
 
 type RollBackController struct {
@@ -20,17 +19,17 @@ func (c *RollBackController) Get() {
 		c.SetJson(1, nil, "Parameter error")
 		return
 	}
-	//上线成功 以及审核失败不允许上线
+	// 上线成功 以及审核失败不允许上线
 	if c.Task.Status != 3 {
 		c.SetJson(1, nil, "此任务未完成")
 		return
 	}
-	//正在上线的不允许上线
+	// 正在上线的不允许上线
 	if c.Task.Action == 1 {
 		c.SetJson(1, nil, "此任务为回滚项目")
 		return
 	}
-	//不允许回滚项目
+	// 不允许回滚项目
 	if c.Task.EnableRollback == 0 {
 		c.SetJson(1, nil, "此任务为不允许回滚")
 		return
@@ -55,8 +54,7 @@ func (c *RollBackController) Get() {
 	task.ProjectId = c.Task.ProjectId
 	task.Status = 0
 	task.UserId = uint(c.User.Id)
-	task.CreatedAt = time.Now()
-	task.UpdatedAt = time.Now()
+
 	task.Hosts = c.Task.Hosts
 	_, err := models.AddTask(&task)
 	if err != nil {

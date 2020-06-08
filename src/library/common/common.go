@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-//判断一个数据是否为空，支持int, float, string, slice, array, map的判断
+// 判断一个数据是否为空，支持int, float, string, slice, array, map的判断
 func Empty(value interface{}) bool {
 	if value == nil {
 		return true
@@ -32,20 +32,20 @@ func Empty(value interface{}) bool {
 	return false
 }
 
-//判断某一个值是否在列表(支持 slice, array, map)中
+// 判断某一个值是否在列表(支持 slice, array, map)中
 func InList(needle interface{}, haystack interface{}) bool {
-	//interface{}和interface{}可以进行比较，但是interface{}不可进行遍历
+	// interface{}和interface{}可以进行比较，但是interface{}不可进行遍历
 	hayValue := reflect.ValueOf(haystack)
 	switch reflect.TypeOf(haystack).Kind() {
 	case reflect.Slice, reflect.Array:
-		//slice, array类型
+		// slice, array类型
 		for i := 0; i < hayValue.Len(); i++ {
 			if hayValue.Index(i).Interface() == needle {
 				return true
 			}
 		}
 	case reflect.Map:
-		//map类型
+		// map类型
 		var keys []reflect.Value = hayValue.MapKeys()
 		for i := 0; i < len(keys); i++ {
 			if hayValue.MapIndex(keys[i]).Interface() == needle {
@@ -58,20 +58,20 @@ func InList(needle interface{}, haystack interface{}) bool {
 	return false
 }
 
-//返回某一个值是否在列表位置(支持 slice, array, map) -1为不再列表中
+// 返回某一个值是否在列表位置(支持 slice, array, map) -1为不再列表中
 func InListIndex(needle interface{}, haystack interface{}) int {
-	//interface{}和interface{}可以进行比较，但是interface{}不可进行遍历
+	// interface{}和interface{}可以进行比较，但是interface{}不可进行遍历
 	hayValue := reflect.ValueOf(haystack)
 	switch reflect.TypeOf(haystack).Kind() {
 	case reflect.Slice, reflect.Array:
-		//slice, array类型
+		// slice, array类型
 		for i := 0; i < hayValue.Len(); i++ {
 			if hayValue.Index(i).Interface() == needle {
 				return i
 			}
 		}
 	case reflect.Map:
-		//map类型
+		// map类型
 		var keys []reflect.Value = hayValue.MapKeys()
 		for i := 0; i < len(keys); i++ {
 			if hayValue.MapIndex(keys[i]).Interface() == needle {
@@ -84,28 +84,28 @@ func InListIndex(needle interface{}, haystack interface{}) int {
 	return -1
 }
 
-//string转int
+// string转int
 func StrToInt(str string) int {
 	intval, _ := strconv.Atoi(str)
 	return intval
 }
 
-//浮点数四舍五入，并取前几位
+// 浮点数四舍五入，并取前几位
 func Round(f float64, n int) float64 {
 	pow10_n := math.Pow10(n)
 	return math.Trunc((f+0.5/pow10_n)*pow10_n) / pow10_n
 }
 
-//通过interface{}获取字符串
+// 通过interface{}获取字符串
 func GetString(val interface{}) string {
 	return fmt.Sprintf("%v", val)
 }
 
-//通过interface{}获取数值型数据
-//此获取比较灵活，转换规则如下
-//1、如果接收数据为浮点string，则返回浮点数的整数部分，如果是整型string，则返回整数，如果是纯字符串，则返回0
-//2、如果接收数据是float型，则返回float的整数部分
-//3、如果接收数据是int, int32, int64型，则返回int
+// 通过interface{}获取数值型数据
+// 此获取比较灵活，转换规则如下
+// 1、如果接收数据为浮点string，则返回浮点数的整数部分，如果是整型string，则返回整数，如果是纯字符串，则返回0
+// 2、如果接收数据是float型，则返回float的整数部分
+// 3、如果接收数据是int, int32, int64型，则返回int
 func GetInt(val interface{}) int {
 	switch v := val.(type) {
 	case int:
@@ -133,12 +133,12 @@ func GetInt(val interface{}) int {
 	}
 }
 
-//通过interface{}获取小数型数据
-//此获取比较灵活，转换规则如下
-//1、如果接收数据为浮点string，则将字符串转换为浮点数
-//2、如果接收数据是float型，则返回float数据
-//3、如果接收数据是int, int32, int64型，则转义成float类型
-//4、返回的数据结果统一为float64
+// 通过interface{}获取小数型数据
+// 此获取比较灵活，转换规则如下
+// 1、如果接收数据为浮点string，则将字符串转换为浮点数
+// 2、如果接收数据是float型，则返回float数据
+// 3、如果接收数据是int, int32, int64型，则转义成float类型
+// 4、返回的数据结果统一为float64
 func GetFloat(val interface{}) float64 {
 	switch v := val.(type) {
 	case int:
@@ -224,7 +224,7 @@ func Md5String(str string) string {
 	return hex.EncodeToString(sum)
 }
 
-//获取当前日期为当月第几周
+// 获取当前日期为当月第几周
 func CountWeek(TimeFormat string) int {
 	loc, _ := time.LoadLocation("Local")
 	t, _ := time.ParseInLocation("2006-01-02 15:04:05", TimeFormat, loc)

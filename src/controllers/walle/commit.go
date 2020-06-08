@@ -16,18 +16,19 @@ func (c *CommitController) Get() {
 		return
 	}
 	branch := c.GetString("branch")
+
 	s := components.BaseComponents{}
 	s.SetProject(c.Project)
 	s.SetTask(&models.Task{})
 	g := components.BaseGit{}
 	g.SetBaseComponents(s)
-	res, err := g.GetCommitList(branch, 25)
+
+	res, err := g.GetCommitList(branch)
 	if err != nil {
 		c.SetJson(1, nil, "获取Commit错误—"+err.Error())
 		return
-	} else {
-		c.SetJson(0, res, "")
-		return
 	}
+	c.SetJson(0, res, "")
+	return
 
 }

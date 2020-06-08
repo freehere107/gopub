@@ -44,6 +44,8 @@ func init() {
 // AddTask insert a new Task into database and returns
 // last inserted Id on success.
 func AddTask(m *Task) (id int64, err error) {
+	m.CreatedAt = time.Now()
+	m.UpdatedAt = time.Now()
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
