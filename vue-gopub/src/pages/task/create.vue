@@ -82,18 +82,18 @@
             for (let i in data.table_data) {
               let value = data.table_data[i].id
               let env = ""
-              let lockstatus = "";
+              let locks_tatus = "";
               if (data.table_data[i].user_lock > 0) {
                 if (data.table_data[i].user_lock == uid) {
-                  lockstatus = data.table_data[i].lockuser + "锁定中"
+                  locks_tatus = data.table_data[i].lockuser + "锁定中"
                 } else {
-                  lockstatus = "锁定中"
+                  locks_tatus = "锁定中"
                 }
               }
 
               env = "测试环境"
               let lable = env + "-" + data.table_data[i].name
-              opData.push({label: lable, value: value, lockstatus: lockstatus})
+              opData.push({label: lable, value: value, lockstatus: locks_tatus})
             }
             this.projects = data.table_data
             this.options = opData
@@ -104,7 +104,6 @@
               this.on_submit_form()
             }
           }).catch(() => {
-
           this.load_data = false
         })
       },
@@ -188,28 +187,14 @@
           for (let i in  this.projects) {
             let project = this.projects[i]
             if (proId == project.id) {
-              console.log(project.repo_type)
-              if (project.repo_type == "git") {
+              if (project.repo_type === "git") {
                 this.$router.push({
                   name: 'taskGit',
                   query: {id: proId}
                 })
                 return
               }
-              if (project.repo_type == "file") {
-                this.$router.push({
-                  name: 'taskFile',
-                  query: {id: proId}
-                })
-                return
-              }
-              if (project.repo_type == "jenkins") {
-                this.$router.push({
-                  name: 'taskJenkins',
-                  query: {id: proId}
-                })
-                return
-              }
+
             }
           }
 

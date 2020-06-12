@@ -15,7 +15,7 @@ type FlushController struct {
 func (c *FlushController) Get() {
 	projectIds := c.GetString("projectIds")
 	projectIdsArr := strings.Split(projectIds, ",")
-	res := []map[string]interface{}{}
+	var res []map[string]interface{}
 	for _, projectId := range projectIdsArr {
 		Project, err := models.GetProjectById(common.GetInt(projectId))
 		if err != nil {

@@ -7,7 +7,6 @@ import (
 	"github.com/linclin/gopub/src/library/common"
 	"github.com/linclin/gopub/src/library/components"
 	"github.com/linclin/gopub/src/models"
-	"github.com/astaxie/beego/logs"
 	"time"
 )
 
@@ -19,62 +18,50 @@ var bm, _ = cache.NewCache("memory", `{"interval":3600}`)
 
 func (c *TaskChartController) Get() {
 	taskType := c.GetString("taskType")
+	var count, totalmem, totalproject, totalpub, totalpubsuccess []orm.Params
 	o := orm.NewOrm()
-	if taskType == "day" {
-		var count []orm.Params
-		o.Raw("SELECT project.`level`,count(task.id) as task_count  FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE TO_DAYS(now()) - TO_DAYS(task.updated_at) = 0 GROUP BY project. LEVEL").Values(&count)
+
+	switch taskType {
+	case "day":
+		_, _ = o.Raw("SELECT project.`level`,count(task.id) as task_count  FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE TO_DAYS(now()) - TO_DAYS(task.updated_at) = 0 GROUP BY project. LEVEL").Values(&count)
 		for _, c := range count {
 			c["name"] = GetProjectLevel(common.GetInt(c["level"]))
 		}
 		c.SetJson(0, count, "")
-		return
-	} else if taskType == "week" {
-		var count []orm.Params
-		o.Raw("SELECT project.`level`,count(task.id) as task_count  FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE YEARWEEK(date_format(task.updated_at,'%Y-%m-%d')) = YEARWEEK(now()) GROUP BY project. LEVEL").Values(&count)
+	case "week":
+		_, _ = o.Raw("SELECT project.`level`,count(task.id) as task_count  FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE YEARWEEK(date_format(task.updated_at,'%Y-%m-%d')) = YEARWEEK(now()) GROUP BY project. LEVEL").Values(&count)
 		for _, c := range count {
 			c["name"] = GetProjectLevel(common.GetInt(c["level"]))
 		}
 		c.SetJson(0, count, "")
-		return
-	} else if taskType == "month" {
-		var count []orm.Params
-		o.Raw("SELECT project.`level`,count(task.id) as task_count  FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE date_format(task.updated_at,'%Y-%m')=date_format(now(),'%Y-%m') GROUP BY project. LEVEL").Values(&count)
+
+	case "month":
+		_, _ = o.Raw("SELECT project.`level`,count(task.id) as task_count  FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE date_format(task.updated_at,'%Y-%m')=date_format(now(),'%Y-%m') GROUP BY project. LEVEL").Values(&count)
 		for _, c := range count {
 			c["name"] = GetProjectLevel(common.GetInt(c["level"]))
 		}
-		logs.Info(count)
 		c.SetJson(0, count, "")
-		return
-	} else if taskType == "dayBypro" {
-		var count []orm.Params
-		o.Raw("SELECT project.`name`,count(task.id) as task_count,project.`level` FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE TO_DAYS(now()) - TO_DAYS(task.updated_at) = 0 and task.status=3 GROUP BY project.id").Values(&count)
+	case "dayBypro":
+		_, _ = o.Raw("SELECT project.`name`,count(task.id) as task_count,project.`level` FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE TO_DAYS(now()) - TO_DAYS(task.updated_at) = 0 and task.status=3 GROUP BY project.id").Values(&count)
 		for _, c := range count {
 			c["name"] = common.GetString(c["name"]) + "-" + GetProjectLevel(common.GetInt(c["level"]))
 		}
 		c.SetJson(0, count, "")
-		return
-	} else if taskType == "weekBypro" {
-		var count []orm.Params
-		o.Raw("SELECT project.`name`,count(task.id) as task_count,project.`level` FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE YEARWEEK(date_format(task.updated_at,'%Y-%m-%d')) = YEARWEEK(now()) and task.status=3 GROUP BY project.id").Values(&count)
+
+	case "weekBypro":
+		_, _ = o.Raw("SELECT project.`name`,count(task.id) as task_count,project.`level` FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE YEARWEEK(date_format(task.updated_at,'%Y-%m-%d')) = YEARWEEK(now()) and task.status=3 GROUP BY project.id").Values(&count)
 		for _, c := range count {
 			c["name"] = common.GetString(c["name"]) + "-" + GetProjectLevel(common.GetInt(c["level"]))
 		}
 		c.SetJson(0, count, "")
-		return
-	} else if taskType == "monthBypro" {
-		var count []orm.Params
-		o.Raw("SELECT project.`name`,count(task.id) as task_count,project.`level` FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE date_format(task.updated_at,'%Y-%m')=date_format(now(),'%Y-%m') and task.status=3 GROUP BY project.id").Values(&count)
+	case "monthBypro":
+		_, _ = o.Raw("SELECT project.`name`,count(task.id) as task_count,project.`level` FROM `task` LEFT JOIN project ON task.project_id = project.id WHERE date_format(task.updated_at,'%Y-%m')=date_format(now(),'%Y-%m') and task.status=3 GROUP BY project.id").Values(&count)
 		for _, c := range count {
 			c["name"] = common.GetString(c["name"]) + "-" + GetProjectLevel(common.GetInt(c["level"]))
 		}
 		c.SetJson(0, count, "")
-		return
-	} else if taskType == "total" {
+	case "total":
 		totalJson := map[string]interface{}{}
-		var totalmem []orm.Params
-		var totalproject []orm.Params
-		var totalpub []orm.Params
-		var totalpubsuccess []orm.Params
 		num, err := o.Raw("SELECT count(id) as `totalmen` FROM `user`").Values(&totalmem)
 		if num > 0 && err == nil {
 			totalJson["totalmen"] = common.GetInt(totalmem[0]["totalmen"])
@@ -97,23 +84,19 @@ func (c *TaskChartController) Get() {
 			totalJson["hostsum"] = bm.Get("hostsum")
 		}
 		c.SetJson(0, totalJson, "")
-		return
+	default:
+		c.SetJson(1, nil, "未传参数")
 	}
-	c.SetJson(1, nil, "未传参数")
-	return
 
 }
 func GetProjectLevel(level int) string {
 	switch level {
 	case 1:
 		return "测试环境"
-		break
 	case 2:
 		return "预发布环境"
-		break
 	case 3:
 		return "生产环境"
-		break
 	}
 	return "删除项目"
 }
@@ -122,19 +105,19 @@ func GetHostNum() int {
 	o := orm.NewOrm()
 	var projects []models.Project
 	i, err := o.Raw("SELECT * FROM `project`").QueryRows(&projects)
-	finalres := []string{}
+	var finalRes []string
 	if i > 0 && err == nil {
 		for _, project := range projects {
 			s := components.BaseComponents{}
 			s.SetProject(&project)
 			ips := s.GetHostIps()
 			for _, ip := range ips {
-				if !common.InList(string(ip), finalres) {
-					finalres = append(finalres, string(ip))
+				if !common.InList(string(ip), finalRes) {
+					finalRes = append(finalRes, string(ip))
 				}
 			}
 		}
 	}
-	bm.Put("hostsum", len(finalres), 1*time.Hour)
-	return (len(finalres))
+	_ = bm.Put("hostsum", len(finalRes), 1*time.Hour)
+	return len(finalRes)
 }

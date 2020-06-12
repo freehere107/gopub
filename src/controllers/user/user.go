@@ -10,23 +10,20 @@ type UserController struct {
 }
 
 func (c *UserController) Get() {
+	o := orm.NewOrm()
+	var (
+		users []orm.Params
+		res   orm.Params
+	)
 	userId, _ := c.GetInt("id")
 	if userId == 0 {
-		o := orm.NewOrm()
-		var users []orm.Params
-		o.Raw("SELECT * FROM `user` ").Values(&users)
+		_, _ = o.Raw("SELECT * FROM `user` ").Values(&users)
 		c.SetJson(0, users, "")
 		return
-	} else {
-		o := orm.NewOrm()
-		var users []orm.Params
-		var res orm.Params
-		i, err := o.Raw("SELECT * FROM `user` where id = ? ", userId).Values(&users)
-		if err == nil && i > 0 {
-			res = users[0]
-		}
-		c.SetJson(0, res, "")
-		return
 	}
-
+	if i, _ := o.Raw("SELECT * FROM `user` where id = ? ", userId).Values(&users); i > 0 {
+		res = users[0]
+	}
+	c.SetJson(0, res, "")
+	return
 }

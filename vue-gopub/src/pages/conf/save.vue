@@ -14,7 +14,8 @@
                             style="width: 600px;"></el-input>
                 </el-form-item>
                 <el-form-item label="项目标签:" prop="Tag" label-width="100px">
-                  <el-select v-model="form.TagArray" filterable multiple allow-create default-first-option placeholder="请选择" style="width: 400px;">
+                  <el-select v-model="form.TagArray" filterable multiple allow-create default-first-option
+                             placeholder="请选择" style="width: 400px;" value="">
                     <el-option
                       v-for="item in Tags"
                       :key="item.value"
@@ -38,28 +39,6 @@
                                   placement="top">
                         <el-input v-model="form.RepoUrl"
                                   placeholder="git@gitee.com/dev-ops/gopub.git"
-                                  style="width: 600px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
-                  </el-tab-pane>
-                  <el-tab-pane label="File" name="file">
-                    <el-form-item label="地址:" prop="RepoUrl" label-width="100px">
-                      <el-tooltip class="item" effect="dark"
-                                  content="发布包的http地址"
-                                  placement="top">
-                        <el-input v-model="form.RepoUrl"
-                                  placeholder="File模式填入下载文件夹路径如：http://download.aaa.org/a/"
-                                  style="width: 600px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
-                  </el-tab-pane>
-                  <el-tab-pane label="Jenkins" name="jenkins">
-                    <el-form-item label="jenkins地址:" prop="RepoUrl" label-width="100px">
-                      <el-tooltip class="item" effect="dark"
-                                  content="job页jenkins地址，类似http://jenkins.xxxxx.com/job/项目名称/"
-                                  placement="top">
-                        <el-input v-model="form.RepoUrl"
-                                  placeholder="job页jenkins地址，类似http://jenkins.xxxxx.com/job/项目名称/"
                                   style="width: 600px;"></el-input>
                       </el-tooltip>
                     </el-form-item>
@@ -141,21 +120,16 @@ README.md" style="width: 400px;"></el-input>
                       </el-tooltip>
                     </el-form-item>
                     <el-form-item label="服务器组" v-if="server_groups.length>0">
-                      <el-select v-model="form.HostGroupArray" filterable multiple default-first-option placeholder="请选择" style="width: 400px;">
-                    <el-option
-                      v-for="item in server_groups"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
+                      <el-select v-model="form.HostGroupArray" filterable multiple default-first-option
+                                 placeholder="请选择" style="width: 400px;">
+                        <el-option
+                          v-for="item in server_groups"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
                     </el-form-item>
-
-
-
-
-
-
 
 
                     <el-form-item label="是否开启分批发布:">
@@ -173,7 +147,7 @@ README.md" style="width: 400px;"></el-input>
                     </el-form-item>
                     <el-form-item v-if="form.IsGroup" label="机器列表:" prop="Hosts">
                       <div>
-                        <el-button type="primary" icon="plus" size="small"   @click="add_data()">添加</el-button>
+                        <el-button type="primary" icon="plus" size="small" @click="add_data()">添加</el-button>
                       </div>
                       <ul>
                         <li v-for="(value, key) in hosts">
@@ -256,25 +230,6 @@ README.md" style="width: 400px;"></el-input>
                 </div>
               </el-col>
             </el-row>
-
-            <el-form-item label="上线方式:">
-              <el-radio-group v-model="form.ReleaseType">
-                <el-radio :label="0">软链接</el-radio>
-                <el-radio :label="1">移动目录</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否开启p2p:">
-              <el-radio-group v-model="form.P2p">
-                <el-radio :label="0">关闭</el-radio>
-                <el-radio :label="1">开启</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否启用gzip:">
-              <el-radio-group v-model="form.Gzip">
-                <el-radio :label="0">关闭</el-radio>
-                <el-radio :label="1">开启</el-radio>
-              </el-radio-group>
-            </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="on_submit_form" :loading="on_submit_loading">立即提交
               </el-button>
@@ -288,8 +243,7 @@ README.md" style="width: 400px;"></el-input>
 </template>
 <script type="text/javascript">
   import {panelTitle} from 'components'
-  import {port_conf, port_code} from 'common/port_uri'
-  import {tools_verify} from 'common/tools'
+  import {port_conf} from 'common/port_uri'
 
   export default {
     data() {
@@ -304,12 +258,12 @@ README.md" style="width: 400px;"></el-input>
           value: 'jenkins',
           label: 'jenkins'
         }],
-        server_groups:[],
+        server_groups: [],
         hosts: [],
         pmsOptions: {},
         form: {
           Name: null,
-          TagArray:[],
+          TagArray: [],
           Level: 2,
           RepoType: "git",
           RepoUrl: null,
@@ -329,8 +283,8 @@ README.md" style="width: 400px;"></el-input>
           P2p: 0,
           Gzip: 1,
           IsGroup: 0,
-          HostGroup:"",
-          HostGroupArray:[]
+          HostGroup: "",
+          HostGroupArray: []
         },
         Tags: [],
         route_id: this.$route.params.id,
@@ -358,88 +312,70 @@ README.md" style="width: 400px;"></el-input>
         this.hosts.push("")
       },
       delete_data(key) {
-        this.hosts.splice(key,1)
+        this.hosts.splice(key, 1)
       },
       handleClick(tab, event) {
         this.RepoType = tab.name
       },
-      get_public_data(){
+      get_public_data() {
         //当前已有标签列表
         this.$http.get(port_conf.tags, {
-                params: {
-                }
-            })
-            .then(({data: {data}}) => {
-          for (var i in data){
-            this.Tags.push({
-              'label':data[i],
-              'value':data[i]
-            })
-          }
+          params: {}
         })
-
-        //服务器组
-        this.$http.get(port_conf.server_groups, {
-                params: {
-                }
-            })
-            .then(({data: {data}}) => {
-        
-          for (var i in data){
-            this.server_groups.push({
-              value:i+"",
-              label:data[i]
-            })
-          }
-
-        })
+          .then(({data: {data}}) => {
+            for (var i in data) {
+              this.Tags.push({
+                'label': data[i],
+                'value': data[i]
+              })
+            }
+          })
       },
       //获取数据
       get_form_data() {
         this.load_data = true
-        
+
 
         this.$http.get(port_conf.get, {
           params: {
             projectId: this.route_id
           }
-        })
-          .then(({data: {data}}) => {
-            data.TagArray=[]
-            if(data.Tag != ""){
-              data.TagArray=data.Tag.split(" ")
-            }
-            data.HostGroupArray=[]
-            if(data.HostGroup != ""){
-              data.HostGroupArray=data.HostGroup.split(" ")
-            }
-            this.form = data
+        }).then(({data: {data}}) => {
+          data.TagArray = []
+          if (data.Tag !== "") {
+            data.TagArray = data.Tag.split(" ")
+          }
+          data.HostGroupArray = []
+          if (data.HostGroup !== "") {
+            data.HostGroupArray = data.HostGroup.split(" ")
+          }
+          this.form = data
 
-              if(this.form.IsGroup){
-                var shosts=this.form.Hosts.split("\n");
-                for (var i in shosts){
-                  var count=shosts[i].split("#");
-                  if(count.length==2){
-                    count[1]=count[1].replace(new RegExp("\n",'g'),"");
-                    count[1]=count[1].replace(new RegExp("\r",'g'),"");
-                    var index=(count[0]|0)-1
-                    if(index>-1){
-                      if(this.hosts[index]){
-                        this.hosts[index]=this.hosts[index]+count[1]+"\r\n"
-                      }else {
-                        this.hosts[index]=count[1]+"\r\n"
-                      }
-
-                    }
+          if (this.form.IsGroup) {
+            var shosts = this.form.Hosts.split("\n");
+            for (var i in shosts) {
+              var count = shosts[i].split("#");
+              if (count.length === 2) {
+                count[1] = count[1].replace(new RegExp("\n", 'g'), "");
+                count[1] = count[1].replace(new RegExp("\r", 'g'), "");
+                var index = (count[0] | 0) - 1
+                if (index > -1) {
+                  if (this.hosts[index]) {
+                    this.hosts[index] = this.hosts[index] + count[1] + "\r\n"
+                  } else {
+                    this.hosts[index] = count[1] + "\r\n"
                   }
-                }
-                for (var i in this.hosts){
-                  this.hosts[i]=this.hosts[i].trim("\r\n")
+
                 }
               }
+            }
+            for (var i in this.hosts) {
+              this.hosts[i] = this.hosts[i].trim("\r\n")
+            }
+          }
 
-            this.load_data = false
-          })
+          this.load_data = false
+        })
           .catch(() => {
             this.load_data = false
           })
@@ -453,28 +389,27 @@ README.md" style="width: 400px;"></el-input>
         this.$refs.form.validate((valid) => {
           if (
             !valid
-          )
-            return false
-          if(this.form.IsGroup){
-            this.form.Hosts=""
-            for (var i in this.hosts){
-              var count= (i|0)+1
-              var shosts=this.hosts[i].split("\n");
-              for (var j=0 ;j<shosts.length;j++){
-                shosts[j]=shosts[j].replace(new RegExp("\n",'g'),"");
-                shosts[j]=shosts[j].replace(new RegExp("\r",'g'),"");
-                if(shosts[j] && shosts[j]!=""){
-                  this.form.Hosts=this.form.Hosts+count+"#"+shosts[j]+"\r\n"
+          ) return false
+          if (this.form.IsGroup) {
+            this.form.Hosts = ""
+            for (var i in this.hosts) {
+              var count = (i | 0) + 1
+              var shosts = this.hosts[i].split("\n");
+              for (var j = 0; j < shosts.length; j++) {
+                shosts[j] = shosts[j].replace(new RegExp("\n", 'g'), "");
+                shosts[j] = shosts[j].replace(new RegExp("\r", 'g'), "");
+                if (shosts[j] && shosts[j] != "") {
+                  this.form.Hosts = this.form.Hosts + count + "#" + shosts[j] + "\r\n"
                 }
               }
             }
-            this.form.Hosts=this.form.Hosts.trim("\r\n")
+            this.form.Hosts = this.form.Hosts.trim("\r\n")
           }
 
 
           this.form.Tag = this.form.TagArray.join(" ")
           this.form.HostGroup = this.form.HostGroupArray.join(" ")
-          var tagArray= this.form.TagArray
+          var tagArray = this.form.TagArray
           delete this.form.TagArray
           this.on_submit_loading = true
           this.$http.post(port_conf.save, this.form)
@@ -492,7 +427,7 @@ README.md" style="width: 400px;"></el-input>
             .catch(() => {
               this.on_submit_loading = false
             })
-          this.form.TagArray=tagArray
+          this.form.TagArray = tagArray
         })
       }
     },

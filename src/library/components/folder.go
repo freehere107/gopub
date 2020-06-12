@@ -16,10 +16,10 @@ import (
  *
  */
 func (c *BaseComponents) InitLocalWorkspace(version string) error {
-	cmds := []string{}
+	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("cp -rf %s %s ", c.GetDeployFromDir(), c.getDeployWorkspace(version)))
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runLocalCommand(cmd)
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -27,7 +27,7 @@ func (c *BaseComponents) InitLocalWorkspace(version string) error {
  * 目标机器的版本库初始化
  */
 func (c *BaseComponents) InitRemoteVersion(version string) error {
-	cmds := []string{}
+	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("mkdir -p %s ", c.getReleaseVersionDir(version)))
 	cmd := strings.Join(cmds, " && ")
 	_, err := c.runRemoteCommand(cmd)
@@ -170,11 +170,11 @@ func (c *BaseComponents) excludes(version string) string {
  * 清理空间
  */
 func (c *BaseComponents) CleanUpLocal(version string) error {
-	cmds := []string{}
+	var cmds []string
 	cmds = append(cmds, fmt.Sprintf("rm -rf %s ", c.getDeployWorkspace(version)))
 	cmds = append(cmds, fmt.Sprintf("rm -f %s ", c.getDeployPackagePath(version)))
 	cmd := strings.Join(cmds, "&&")
-	_, err := c.runLocalCommand(cmd)
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 

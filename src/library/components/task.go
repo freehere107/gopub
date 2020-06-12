@@ -11,11 +11,11 @@ func (c *BaseComponents) PreDeploy(version string) error {
 	if len(tasks) == 0 {
 		return nil
 	}
-	for i, _ := range tasks {
+	for i := range tasks {
 		tasks[i] = strings.Replace(tasks[i], "\n", "", -1)
 		tasks[i] = strings.Replace(tasks[i], "\r", "", -1)
 	}
-	cmds := []string{}
+	var cmds []string
 	workspace := strings.TrimRight(c.getDeployWorkspace(version), "/")
 	ipsString := strings.Join(c.GetHostIps(), ",")
 	ipAndPortString := strings.Join(c.GetAllHost(), ",")
@@ -37,7 +37,7 @@ func (c *BaseComponents) PreDeploy(version string) error {
 		}
 	}
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runLocalCommand(cmd)
+	_, err := c.runRemoteCommand(cmd)
 	return err
 
 }
@@ -46,11 +46,11 @@ func (c *BaseComponents) PostDeploy(version string) error {
 	if len(tasks) == 0 {
 		return nil
 	}
-	for i, _ := range tasks {
+	for i := range tasks {
 		tasks[i] = strings.Replace(tasks[i], "\n", "", -1)
 		tasks[i] = strings.Replace(tasks[i], "\r", "", -1)
 	}
-	cmds := []string{}
+	var cmds []string
 	workspace := strings.TrimRight(c.getDeployWorkspace(version), "/")
 	ipsString := strings.Join(c.GetHostIps(), ",")
 	ipAndPortString := strings.Join(c.GetAllHost(), ",")
@@ -72,7 +72,7 @@ func (c *BaseComponents) PostDeploy(version string) error {
 		}
 	}
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runLocalCommand(cmd)
+	_, err := c.runRemoteCommand(cmd)
 	return err
 }
 
@@ -81,7 +81,7 @@ func (c *BaseComponents) getRemotePreReleaseCommand(version string) string {
 	if len(tasks) == 0 {
 		return ""
 	}
-	for i, _ := range tasks {
+	for i := range tasks {
 		tasks[i] = strings.Replace(tasks[i], "\n", "", -1)
 		tasks[i] = strings.Replace(tasks[i], "\r", "", -1)
 	}
@@ -121,7 +121,7 @@ func (c *BaseComponents) getRemotePostReleaseCommand(version string) string {
 		tasks[i] = strings.Replace(tasks[i], "\n", "", -1)
 		tasks[i] = strings.Replace(tasks[i], "\r", "", -1)
 	}
-	cmds := []string{}
+	var cmds []string
 	workspace := c.getTargetWorkspace()
 	versionDir := c.getReleaseVersionDir(version)
 	ipsString := strings.Join(c.GetHostIps(), ",")
@@ -148,11 +148,12 @@ func (c *BaseComponents) getRemotePostReleaseCommand(version string) string {
 	return cmd
 }
 func (c *BaseComponents) UpdateRemoteServers(version string) error {
-	cmds := []string{}
+	var cmds []string
 	// pre-release task
 	if c.getRemotePreReleaseCommand(version) != "" {
 		cmds = append(cmds, c.getRemotePreReleaseCommand(version))
 	}
+
 	if c.GetLinkCommand(version) != "" {
 		cmds = append(cmds, c.GetLinkCommand(version))
 	}
@@ -169,11 +170,11 @@ func (c *BaseComponents) LastDeploy(version string) error {
 	if len(tasks) == 0 {
 		return nil
 	}
-	for i, _ := range tasks {
+	for i := range tasks {
 		tasks[i] = strings.Replace(tasks[i], "\n", "", -1)
 		tasks[i] = strings.Replace(tasks[i], "\r", "", -1)
 	}
-	cmds := []string{}
+	var cmds []string
 	replaceMap := map[string]string{}
 	replaceMap["{WORKSPACE}"] = strings.TrimRight(c.getDeployWorkspace(version), "/")
 	replaceMap["{VERSION}"] = c.getReleaseVersionDir(version)
@@ -206,7 +207,7 @@ func (c *BaseComponents) LastDeploy(version string) error {
 		}
 	}
 	cmd := strings.Join(cmds, " && ")
-	_, err := c.runLocalCommand(cmd)
+	_, err := c.runRemoteCommand(cmd)
 	return err
 
 }

@@ -9,7 +9,7 @@ type CopyController struct {
 	controllers.BaseController
 }
 
-func (c *CopyController) Get() {
+func (c *CopyController) Post() {
 	if c.User == nil || c.User.Id == 0 {
 		c.SetJson(2, nil, "not login")
 		return

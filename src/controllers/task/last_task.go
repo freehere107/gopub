@@ -17,7 +17,7 @@ func (c *LastTaskController) Get() {
 	}
 	o := orm.NewOrm()
 	var task models.Task
-	o.Raw("SELECT * FROM task where project_id = ? AND status=3 order by task.id DESC LIMIT 1", c.Project).QueryRow(&task)
+	_ = o.Raw("SELECT * FROM task where project_id = ? AND status=3 order by task.id DESC LIMIT 1", c.Project).QueryRow(&task)
 	c.SetJson(0, task, "")
 	return
 

@@ -7,8 +7,7 @@ import (
 	"github.com/linclin/gopub/src/controllers/api"
 	"github.com/linclin/gopub/src/controllers/conf"
 	"github.com/linclin/gopub/src/controllers/other"
-	"github.com/linclin/gopub/src/controllers/p2p"
-	"github.com/linclin/gopub/src/controllers/record"
+	recordcontrollers "github.com/linclin/gopub/src/controllers/record"
 	"github.com/linclin/gopub/src/controllers/task"
 	"github.com/linclin/gopub/src/controllers/user"
 	"github.com/linclin/gopub/src/controllers/walle"
@@ -37,48 +36,37 @@ func Run() {
 	beego.Router("/api/get/conf/mylist", &confcontrollers.MyListController{})
 	beego.Router("/api/get/conf/lock", &confcontrollers.LockController{})
 	beego.Router("/api/get/conf/tags", &confcontrollers.TagsController{})
-
-	beego.Router("/api/post/conf/save", &confcontrollers.SaveController{})
-	beego.Router("/api/get/conf/del", &confcontrollers.DelController{})
-	beego.Router("/api/get/conf/copy", &confcontrollers.CopyController{})
-	beego.Router("/api/get/conf/server_groups", &confcontrollers.ServerGroupsController{})
-	beego.Router("/api/get/conf/groupinfo", &confcontrollers.GroupInfoController{})
-
 	// terminal
 	beego.Router("/api/get/walle/detection", &wallecontrollers.DetectionController{})
-
-	beego.Router("/api/get/walle/detectionssh", &wallecontrollers.DetectionsshController{})
-	beego.Router("/api/get/walle/release", &wallecontrollers.ReleaseController{})
-	beego.Router("/api/get/walle/md5", &wallecontrollers.GetMd5Controller{})
-	beego.Router("/api/get/walle/flush", &wallecontrollers.FlushController{})
-
 	beego.Router("/api/get/git/branch", &wallecontrollers.BranchController{})
 	beego.Router("/api/get/git/tag", &wallecontrollers.TagController{})
 	beego.Router("/api/get/git/commit", &wallecontrollers.CommitController{})
-
-	beego.Router("/api/get/git/gitpull", &wallecontrollers.GitpullController{})
-	beego.Router("/api/get/git/gitlog", &wallecontrollers.GitlogController{})
-
 	beego.Router("/api/get/task/list", &taskcontrollers.ListController{})
-	beego.Router("/api/get/task/chart", &taskcontrollers.TaskChartController{})
-	beego.Router("/api/post/task/save", &taskcontrollers.SaveController{})
 	beego.Router("/api/get/task/get", &taskcontrollers.TaskController{})
+	beego.Router("/api/get/record/list", &recordcontrollers.ListController{})
+	// publish
+	beego.Router("/api/get/walle/release", &wallecontrollers.ReleaseController{})
+	beego.Router("/api/post/conf/save", &confcontrollers.SaveController{})
+	beego.Router("/api/get/conf/copy", &confcontrollers.CopyController{})
+	beego.Router("/api/get/conf/del", &confcontrollers.DelController{})
+	beego.Router("/api/get/user", &usercontrollers.UserController{})
+	beego.Router("/api/get/task/chart", &taskcontrollers.TaskChartController{})
 	beego.Router("/api/get/task/changes", &taskcontrollers.ChangesController{})
 	beego.Router("/api/get/task/last", &taskcontrollers.LastTaskController{})
-	beego.Router("/api/get/task/rollback", &taskcontrollers.RollBackController{})
+	beego.Router("/api/post/task/save", &taskcontrollers.SaveController{})
 	beego.Router("/api/get/task/del", &taskcontrollers.DelController{})
+	beego.Router("/api/get/user/project", &usercontrollers.UserProjectController{})
 
-	beego.Router("/api/get/p2p/task", &p2pcontrollers.TaskController{})
-	beego.Router("/api/get/p2p/check", &p2pcontrollers.CheckController{})
-	beego.Router("/api/post/p2p/agent", &p2pcontrollers.AgentController{})
-	beego.Router("/api/get/p2p/send", &p2pcontrollers.SendAgentController{})
-
-	beego.Router("/api/get/record/list", &recordcontrollers.ListController{})
-
+	// todo not review
+	beego.Router("/api/get/walle/detectionssh", &wallecontrollers.DetectionsshController{})
+	beego.Router("/api/get/walle/md5", &wallecontrollers.GetMd5Controller{})
+	beego.Router("/api/get/walle/flush", &wallecontrollers.FlushController{})
+	beego.Router("/api/get/git/gitpull", &wallecontrollers.GitpullController{})
+	beego.Router("/api/get/git/gitlog", &wallecontrollers.GitlogController{})
+	beego.Router("/api/get/task/rollback", &taskcontrollers.RollBackController{})
 	beego.Router("/api/get/other/noauto", &othercontrollers.NoAutoController{})
 	beego.Router("/api/get/test/api", &controllers.TestApiController{})
-	beego.Router("/api/get/user/project", &usercontrollers.UserProjectController{})
-	beego.Router("/api/get/user", &usercontrollers.UserController{})
+
 	beego.Router("/", &controllers.MainController{})
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/token",

@@ -9,9 +9,8 @@ type DelController struct {
 	controllers.BaseController
 }
 
-func (c *DelController) Get() {
-	projectId, _ := c.GetInt("projectId", 0)
-	err := models.DeleteProject(projectId)
+func (c *DelController) Post() {
+	err := models.DeleteProject(c.Project.Id)
 	if err != nil {
 		c.SetJson(1, nil, err.Error())
 		return

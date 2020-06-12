@@ -68,25 +68,17 @@
               title: "创建上线单",
               path: "/task/create"
             }]
-          }, {
-            title: "其他操作",
-            path: "/other",
-            icon: "fa-bar-chart-o",
-            child: [{
-              title: "agent状态查询",
-              path: "/p2p/check",
-              icon: "ace-icon fa fa-desktop"
+          },
+            {
+              title: "用户管理",
+              path: "/user",
+              icon: "el-icon-setting",
+              child: [{
+                title: "用户列表",
+                path: "/user/list",
+                icon: "ace-icon fa fa-desktop"
+              }]
             }]
-          }, {
-            title: "用户管理",
-            path: "/user",
-            icon: "el-icon-setting",
-            child: [{
-              title: "用户列表",
-              path: "/user/list",
-              icon: "ace-icon fa fa-desktop"
-            }]
-          }]
         }
       } else {
         return {

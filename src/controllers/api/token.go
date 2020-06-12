@@ -62,15 +62,15 @@ func (c *TokenController) IssueToken() {
 		return
 	}
 	// Create a Token that will be signed with HS256.
-	//nowtime := time.Now().Unix()
+	// nowtime := time.Now().Unix()
 	exptime := time.Now().Unix() + 3600
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims, _ := token.Claims.(jwt.MapClaims)
-	claims["iss"] = appid //The issuer of the token，token 是给谁的
-	//token.Claims["sub"] = beego.AppConfig.String("AppName")                // The subject of the token，token 主题
-	//token.Claims["jti"] = appid + strconv.FormatInt(time.Now().Unix(), 10) //JWT ID。针对当前 token 的唯一标识
-	//token.Claims["iat"] = nowtime //Issued At。 token 创建时间， Unix 时间戳格式
-	claims["exp"] = exptime //Expiration Time。 token 过期时间，Unix 时间戳格式
+	claims["iss"] = appid // The issuer of the token，token 是给谁的
+	// token.Claims["sub"] = beego.AppConfig.String("AppName")                // The subject of the token，token 主题
+	// token.Claims["jti"] = appid + strconv.FormatInt(time.Now().Unix(), 10) //JWT ID。针对当前 token 的唯一标识
+	// token.Claims["iat"] = nowtime //Issued At。 token 创建时间， Unix 时间戳格式
+	claims["exp"] = exptime // Expiration Time。 token 过期时间，Unix 时间戳格式
 	// The claims object allows you to store information in the actual token.
 	tokenString, err := token.SignedString([]byte(beego.AppConfig.String("SecretKey")))
 	// tokenString Contains the actual token you should share with your client.

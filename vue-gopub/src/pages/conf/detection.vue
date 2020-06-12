@@ -10,8 +10,7 @@
 </template>
 <script type="text/javascript">
   import {panelTitle, terminal} from 'components'
-  import {port_conf, port_code} from 'common/port_uri'
-  import {tools_verify} from 'common/tools'
+  import {port_conf} from 'common/port_uri'
 
   export default {
     data() {
@@ -44,16 +43,14 @@
           params: {
             projectId: this.route_id,
           }
-        })
-          .then(({data: {data}}) => {
-            this.$message({
-              message: "检测成功",
-              type: 'success'
-            })
+        }).then(({data: {data}}) => {
+          this.$message({
+            message: "检测成功",
+            type: 'success'
           })
-          .catch(() => {
-            }
-          )
+        }).catch(() => {
+          }
+        )
       }
     },
     components: {

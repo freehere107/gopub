@@ -133,7 +133,7 @@
         })
         setTimeout(() => {
             this.$router.push({
-              name: 'taskMyList'
+              name: 'taskList'
             })
           },
           500
@@ -230,7 +230,7 @@
       //提交
       on_submit_form() {
         this.$refs.form.validate((valid) => {
-          if (!valid){
+          if (!valid) {
             return false
           }
           this.on_submit_loading = true
@@ -246,7 +246,7 @@
               })
               setTimeout(() => {
                   this.$router.push({
-                    name: 'taskMyList'
+                    name: 'taskList'
                   })
                 },
                 500

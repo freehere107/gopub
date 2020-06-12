@@ -13,13 +13,13 @@ type ListController struct {
 func (c *ListController) Get() {
 	taskId := c.GetString("taskId")
 	var records []orm.Params
+
+	o := orm.NewOrm()
 	if common.GetInt(taskId) <= 0 {
 		timeNow := c.GetString("time")
-		o := orm.NewOrm()
-		o.Raw("SELECT * FROM `record` where task_id=? and created_at> ? ORDER BY `id` ASC ", taskId, timeNow).Values(&records)
+		_, _ = o.Raw("SELECT * FROM `record` where task_id=? and created_at> ? ORDER BY `id` ASC ", taskId, timeNow).Values(&records)
 	} else {
-		o := orm.NewOrm()
-		o.Raw("SELECT * FROM `record` where task_id=? ORDER BY `id` ASC ", taskId).Values(&records)
+		_, _ = o.Raw("SELECT * FROM `record` where task_id=? ORDER BY `id` ASC ", taskId).Values(&records)
 	}
 	c.SetJson(0, records, "")
 	return

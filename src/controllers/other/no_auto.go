@@ -2,9 +2,9 @@ package othercontrollers
 
 import (
 	"fmt"
+	"github.com/astaxie/beego/logs"
 	"github.com/linclin/gopub/src/controllers"
 	"github.com/linclin/gopub/src/library/common"
-	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego/orm"
 )
@@ -31,7 +31,7 @@ func (c *NoAutoController) Get() {
 		o.Raw(fmt.Sprintf(sql, " and date_format(task.updated_at,'%Y-%m')=date_format(now(),'%Y-%m') ")).Values(&proIds)
 		o.Raw(fmt.Sprintf(sql, " and date_format(task.updated_at,'%Y-%m')=date_format(now(),'%Y-%m')  and task.user_id=1")).Values(&proIds1)
 	}
-	res := []orm.Params{}
+	var res []orm.Params
 	for _, proId := range proIds {
 		id := common.GetInt(proId["id"])
 		isIn := false

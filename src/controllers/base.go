@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/astaxie/beego/logs"
 	"github.com/linclin/gopub/src/library/common"
+	"github.com/linclin/gopub/src/util/validator"
 	"runtime"
 
 	"github.com/astaxie/beego"
@@ -19,6 +20,11 @@ type BaseController struct {
 	User    *models.User
 }
 
+type DefaultParams struct {
+	ProjectId string `json:"projectId,omitempty"`
+	TaskId    string `json:"taskId,omitempty"`
+}
+
 // Prepare implemented Prepare method for baseRouter.
 func (c *BaseController) Prepare() {
 
@@ -31,35 +37,42 @@ func (c *BaseController) Prepare() {
 		}
 	}()
 
-	taskId := ""
+	var (
+		defaultParams            DefaultParams
+		taskId, projectId, token string
+	)
+	_ = validator.Validate(c.Ctx.Input.RequestBody, &defaultParams)
+
 	if c.Ctx.Input.Param(":taskId") != "" {
 		taskId = c.Ctx.Input.Param(":taskId")
 	} else if c.GetString("taskId") != "" {
 		taskId = c.GetString("taskId")
+	} else {
+		taskId = defaultParams.TaskId
 	}
+
 	if taskId != "" {
 		c.Task, _ = models.GetTaskById(common.GetInt(taskId))
 	}
 
-	projectId := ""
 	if c.Ctx.Input.Param(":projectId") != "" {
 		projectId = c.Ctx.Input.Param(":projectId")
 	} else if c.GetString("projectId") != "" {
 		projectId = c.GetString("projectId")
+	} else {
+		projectId = defaultParams.ProjectId
 	}
 	if projectId != "" {
 		c.Project, _ = models.GetProjectById(common.GetInt(projectId))
 	}
 
-	token := ""
 	if ah := c.Ctx.Input.Header("Authorization"); ah != "" {
 		if len(ah) > 5 && strings.ToUpper(ah[0:5]) == "TOKEN" {
 			token = ah[6:]
 			if token != "" {
 				var users []models.User
 				o := orm.NewOrm()
-				s, err := o.Raw("SELECT * FROM `user` WHERE auth_key= ?", token).QueryRows(&users)
-				if s > 0 && err == nil {
+				if s, _ := o.Raw("SELECT * FROM `user` WHERE auth_key= ?", token).QueryRows(&users); s > 0 {
 					c.User = &(users[0])
 				}
 			}
