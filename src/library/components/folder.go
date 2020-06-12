@@ -78,7 +78,7 @@ func (c *BaseComponents) GetLinkCommand(version string) string {
 	cmds := []string{}
 	cmds = append(cmds, fmt.Sprintf("cd %s ", linkFrom))
 
-	if c.project.ReleaseType == models.RELEASE_TYPE_SOFTLINK {
+	if c.project.ReleaseType == models.ReleaseTypeSoftLink {
 		cmds = append(cmds, fmt.Sprintf("ln -sfn %s %s ", linkFrom, currentTmp))
 		cmds = append(cmds, fmt.Sprintf("chown -h %s %s ", user, currentTmp))
 		cmds = append(cmds, fmt.Sprintf("mv -fT %s %s ", currentTmp, c.project.ReleaseTo))

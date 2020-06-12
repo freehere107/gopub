@@ -121,15 +121,6 @@
                         <label>用户 ：</label><span style="color:teal">{{project_data.ReleaseUser}}</span>
                         <label style="margin-left:120px">保留版本数 ：</label><span style="color:teal">{{project_data.KeepVersionNum}}</span>
                       </el-form-item>
-
-                      <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
-                        <label>webroot ：</label> <span style="color:teal">{{project_data.ReleaseTo}}</span>
-                      </el-form-item>
-
-                      <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
-                        <label>发布版本库 ：</label> <span style="color:teal"> {{project_data.ReleaseLibrary}} </span>
-                      </el-form-item>
-
                       <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
                         <label>机器列表 ：</label> <span style="color:teal"> {{project_data.Hosts}} </span>
                       </el-form-item>
@@ -146,30 +137,17 @@
                 <div class="loginWarpa">
                   <div class="login-forma">
                     <el-form ref="form" label-width="0">
-                      <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
-                        <label>代码检出前任务 ：</label><span style="color:teal">{{project_data.PreDeploy}}</span>
-                      </el-form-item>
+
 
                       <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
                         <label>代码检出后任务 ：</label> <span style="color:teal">{{project_data.PostDeploy}}</span>
                       </el-form-item>
 
-                      <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
-                        <label>同步完目标机后任务 ：</label> <span style="color:teal"> {{project_data.PreRelease}} </span>
-                      </el-form-item>
 
                       <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
-                        <label>更改版本软链接后任务 ：</label> <span style="color:teal"> {{project_data.PostRelease}} </span>
+                        <label>build完成后任务 ：</label> <span style="color:teal"> {{project_data.PostRelease}} </span>
                       </el-form-item>
 
-                      <el-form-item prop="old_password" class="login-itema" style="margin-top:-20px;margin-left:-25px">
-                        <el-form-item><label>部属方式 ：</label> <span style="color:teal"> {{project_data.ReleaseType== 0 ? '软链接' : '移动目录'}} </span>
-                        </el-form-item>
-                        <el-form-item><label>是否开启p2p ：</label> <span style="color:teal"> {{project_data.P2p== 0 ? 'No' : 'Yes'}} </span>
-                        </el-form-item>
-                        <el-form-item><label>是否开启gzip ：</label> <span style="color:teal"> {{project_data.Gzip == 0 ? 'No' : 'Yes'}} </span>
-                        </el-form-item>
-                      </el-form-item>
                     </el-form>
                   </div>
                 </div>
@@ -298,12 +276,12 @@
           this.$http.post(port_conf.del, {
             projectId: id,
           }).then(({data: {msg}}) => {
-              this.get_table_data()
-              this.$message({
-                message: msg,
-                type: 'success'
-              })
-            }).catch(() => {
+            this.get_table_data()
+            this.$message({
+              message: msg,
+              type: 'success'
+            })
+          }).catch(() => {
             this.load_data = false
           })
         }).catch(() => {

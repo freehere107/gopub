@@ -13,8 +13,7 @@ type ConfController struct {
 }
 
 func (c *ConfController) Get() {
-	projectId, _ := c.GetInt("projectId", 0)
-	project, _ := models.GetProjectById(projectId)
+	project, _ := models.GetProjectById(c.Project.Id)
 	c.SetJson(0, project, "")
 	return
 

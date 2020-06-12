@@ -96,21 +96,6 @@ README.md" style="width: 400px;"></el-input>
                                   style="width: 400px;"></el-input>
                       </el-tooltip>
                     </el-form-item>
-                    <el-form-item label="webroot:" prop="ReleaseTo">
-                      <el-tooltip class="item" effect="dark"
-                                  content="代码的最终部署路径，请不要在目标机新建此目录，walle会自动生成此软链，正确设置父目级录即可"
-                                  placement="top">
-                        <el-input v-model="form.ReleaseTo" placeholder="/data/wwwroot/xxx"
-                                  style="width: 400px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
-                    <el-form-item label="发布版本库:" prop="ReleaseLibrary">
-                      <el-tooltip class="item" effect="dark"
-                                  content="代码发布的版本库，每次发布更新webroot的软链到当前最新版本" placement="top">
-                        <el-input v-model="form.ReleaseLibrary" placeholder="/data/gopub_releases"
-                                  style="width: 400px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
                     <el-form-item label="版本保留数:" prop="KeepVersionNum">
                       <el-tooltip class="item" effect="dark" content="过多的历史版本将被删除，只可回滚保留的版本"
                                   placement="top">
@@ -185,35 +170,11 @@ README.md" style="width: 400px;"></el-input>
 
                 <div class="panel-body">
                   <div class="panel-body el-form el-form--label-top">
-                    <el-form-item label="代码检出前任务:" prop="PreDeploy">
-                      <el-tooltip class="item" effect="dark"
-                                  content="在部署代码之前的准备工作，如git的一些前置检查、vendor的安装（更新），一行一条"
-                                  placement="top">
-                        <el-input type="textarea" autosize v-model="form.PreDeploy"
-                                  style="width: 400px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
                     <el-form-item label="代码检出后任务:" prop="PostDeploy">
                       <el-tooltip class="item" effect="dark"
                                   content="git代码检出之后，可能做一些调整处理，如vendor拷贝，环境适配（mv config-test.php config.php），一行一条"
                                   placement="top">
                         <el-input type="textarea" autosize v-model="form.PostDeploy"
-                                  style="width: 400px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
-                    <el-form-item label="同步完目标机后任务:" prop="PreRelease">
-                      <el-tooltip class="item" effect="dark"
-                                  content='同步完所有目标机器之后，更改版本软链之前触发任务。java可能要做一些暂停服务的操作'
-                                  placement="top">
-                        <el-input type="textarea" autosize v-model="form.PreRelease"
-                                  style="width: 400px;"></el-input>
-                      </el-tooltip>
-                    </el-form-item>
-                    <el-form-item label="更改版本软链接后任务:" prop="PostRelease">
-                      <el-tooltip class="item" effect="dark"
-                                  content='所有目标机器都部署完毕之后，做一些清理工作，如删除缓存、重启服务（nginx、php、task），一行一条'
-                                  placement="top">
-                        <el-input type="textarea" autosize v-model="form.PostRelease"
                                   style="width: 400px;"></el-input>
                       </el-tooltip>
                     </el-form-item>
@@ -270,9 +231,7 @@ README.md" style="width: 400px;"></el-input>
           DeployFrom: null,
           Excludes: null,
           ReleaseUser: null,
-          ReleaseTo: null,
           ReleaseType: 0,
-          ReleaseLibrary: null,
           RepoPassword: null,
           RepoUsername: null,
           KeepVersionNum: 20,
@@ -295,8 +254,6 @@ README.md" style="width: 400px;"></el-input>
           RepoUrl: [{required: true, message: '项目地址不能为空', trigger: 'blur'}],
           DeployFrom: [{required: true, message: '代码检出仓库不能为空', trigger: 'blur'}],
           ReleaseUser: [{required: true, message: '目标机器部署代码用户不能为空。', trigger: 'blur'}],
-          ReleaseTo: [{required: true, message: '代码的webroot不能为空', trigger: 'blur'}],
-          ReleaseLibrary: [{required: true, message: '发布版本库不能为空。', trigger: 'blur'}],
           Hosts: [{required: true, message: '机器列表不能为空。', trigger: 'blur'}],
         }
       }

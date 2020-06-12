@@ -121,40 +121,13 @@ func (c *ReleaseController) releaseHandling() error {
 		return err
 	}
 
-	// 执行 PreDeploy 的脚本
-	err = s.PreDeploy(c.Task.LinkId)
-	_ = c.updateRecord(30)
-	if err != nil {
-		c.failHandling(&s)
-		return err
-	}
-
-	// if c.Project.RepoType == "git" {
-	// 	g := components.BaseGit{}
-	// 	g.SetBaseComponents(s)
-	// 	err = g.UpdateToVersion()
-	// 	_ = c.updateRecord(30)
-	// 	if err != nil {
-	// 		c.failHandling(&s)
-	// 		return err
-	// 	}
-	// }
-
 	// 执行 PostDeploy 的脚本
 	err = s.PostDeploy(c.Task.LinkId)
-	_ = c.updateRecord(50)
+	_ = c.updateRecord(40)
 	if err != nil {
 		c.failHandling(&s)
 		return err
 	}
-
-	//
-	/*err = s.UpdateRemoteServers(c.Task.LinkId)
-	_ = c.updateRecord(60)
-	if err != nil {
-		c.failHandling(&s)
-		return err
-	}*/
 
 	// 执行 LastDeploy
 	err = s.LastDeploy(c.Task.LinkId)

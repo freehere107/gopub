@@ -26,7 +26,7 @@ func (c *AgentController) Get() {
 	s.SetTask(&models.Task{Id: -3})
 	ips := s.GetHostIps()
 	ss := init_sever.P2pSvc.CheckAllClient(ips)
-	reIps := []string{}
+	var reIps []string
 	for ip, status := range ss {
 		if status == "dead" {
 			reIps = append(reIps, strings.Split(ip, ":")[0])
@@ -42,12 +42,10 @@ func (c *AgentController) Get() {
 			c.SetJson(0, nil, "重启成功")
 			return
 		}
-	} else {
-		c.SetJson(0, nil, "已全部启动")
-		return
 	}
-
+	c.SetJson(0, nil, "已全部启动")
 	return
+
 }
 
 func (c *AgentController) Post() {
@@ -55,8 +53,8 @@ func (c *AgentController) Post() {
 		c.SetJson(1, nil, "Parameter error")
 		return
 	}
-	ips := []string{}
-	json.Unmarshal(c.Ctx.Input.RequestBody, &ips)
+	var ips []string
+	_ = json.Unmarshal(c.Ctx.Input.RequestBody, &ips)
 	s := components.BaseComponents{}
 	s.SetProject(c.Project)
 	AgentDestDir := beego.AppConfig.String("AgentDestDir")

@@ -31,7 +31,6 @@ func main() {
 	util.Graceful()
 	util.Swagger()
 	toolbox.StartTask()
-	// init_sever.Start()
 	routers.Run()
 	beego.Run()
 }
